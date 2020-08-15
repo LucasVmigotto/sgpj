@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+.vscode/
+.nyc_output/
+.pack/
+.env
+.-lock*
+*.tgz
