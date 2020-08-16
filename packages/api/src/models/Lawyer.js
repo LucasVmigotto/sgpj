@@ -1,6 +1,7 @@
 const { gql } = require('apollo-server-express')
 const { camelizeKeys } = require('humps')
-// const { requestedFields } = require('../utils')
+const { cipher } = require('../utils')
+const graphqlFields = require('graphql-fields')
 // const debug = require('debug')('api:[models]user=>')
 
 const typeDefs = gql`
@@ -96,7 +97,58 @@ const resolvers = {
     }
   },
   Mutation: {
-    async persistLawyer (_, { lawyerId, input }, { knex }) {},
+    async persistLawyer (_, { lawyerId, input }, { knex }, info) {
+      const lawyer = {
+        name: input.name,
+        roles: input.roles.length === 0
+          ? ['LAWYER']
+          : input.roles
+      }
+      if (lawyerId) {
+        let [newLawyer] = await knex('lawyer')
+          .update({
+            ...lawyer,
+            update_at: new Date().toISOString()
+          })
+          .where({ lawyer_id: lawyerId })
+          .returning([
+            'lawyer_id', 'name', 'roles', 'create_at', 'update_at', 'user_id'
+          ])
+        if (graphqlFields(info).user) {
+          const [user] = knex('user')
+            .select('user_id', 'email')
+            .where({ user_id: newLawyer.user_id })
+          newLawyer = {
+            ...newLawyer,
+            user: camelizeKeys(user)
+          }
+          delete newLawyer.user_id
+        }
+        return camelizeKeys(newLawyer)
+      } else {
+        const user = {
+          email: input.user.email,
+          password: cipher(input.user.password)
+        }
+        const [newUser] = await knex('user')
+          .insert({ ...user })
+          .returning(['user_id', 'email'])
+        const [newLawyer] = await knex('lawyer')
+          .insert({
+            ...lawyer,
+            user_id: newUser.user_id
+          })
+          .returning([
+            'lawyer_id', 'name', 'roles', 'create_at', 'update_at'
+          ])
+        return {
+          ...camelizeKeys(newLawyer),
+          user: {
+            ...camelizeKeys(newUser)
+          }
+        }
+      }
+    },
     async deleteLawyer (_, { lawyerId }, { knex, logger }) {}
   }
 }

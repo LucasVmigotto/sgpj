@@ -1,16 +1,5 @@
-const graphqlFields = require('graphql-fields')
 const config = require('../config')
 const crypto = require('crypto')
-const { decamelize } = require('humps')
-
-const requestedFields = info => {
-  const fields = graphqlFields(info)
-  return fields.items
-    ? Object.keys(fields.items)
-      .map(el => decamelize(el))
-    : Object.keys(fields)
-      .map(el => decamelize(el))
-}
 
 const cipher = password => {
   const cipher = crypto.createCipheriv(
@@ -21,6 +10,5 @@ const cipher = password => {
 }
 
 module.exports = {
-  requestedFields,
   cipher
 }
