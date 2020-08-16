@@ -21,7 +21,7 @@ describe('Models:Lawyer', function () {
   after(async function () {
     await knex.destroy()
   })
-  describe('Querys', function () {
+  describe('Queries', function () {
     let lawyer = null
     it('lawyers', async function () {
       const query = `
@@ -94,16 +94,19 @@ describe('Models:Lawyer', function () {
       expect(item).to.be.deep.equal(lawyer)
     })
   })
-  /*describe('Mutation', function () {
-    let user = null
+  describe('Mutations', function () {
+    let lawyer = null
     const body = {
       query: `
-        mutation ($input: UserInput!) {
-          persistUser(input: $input) {
-            userId
+        mutation ($input: LawyerInput!) {
+          persistLawyer(input: $input) {
+            lawyerId
             name
-            email
-            psw
+            roles
+            user {
+              userId
+              email
+            }
             createAt
             updateAt
           }
@@ -111,28 +114,35 @@ describe('Models:Lawyer', function () {
       `,
       variables: {
         input: {
-          name: 'Test',
-          email: `test${Date.now()}@mail.com`,
-          psw: 'testpassword'
+          name: 'John Doe 2',
+          roles: [],
+          user: {
+            email: 'email@mail.com',
+            password: 'John\'s Password'
+          }
         }
       }
     }
-    it('persistUser (create)', async function () {
+    it('persistLawyer (create)', async function () {
       const {
         body: {
-          data: { persistUser }
+          data: { persistLawyer }
         }
       } = await request(httpServer)
         .post(config.ENDPOINT)
         .send(body)
-      user = { ...persistUser }
-      expect(user).to.be.not.null
-      expect(user).to.be.an('object')
-      expect(user).to.have.property('userId')
-      expect(user).to.have.property('createAt')
-      expect(user).to.have.property('updateAt')
+      lawyer = { ...persistLawyer }
+      expect(lawyer).to.be.not.null
+      expect(lawyer).to.be.an('object')
+      expect(lawyer).to.have.property('name')
+      expect(lawyer).to.have.property('roles')
+      expect(lawyer).to.have.property('user')
+      expect(lawyer.user).to.have.property('userId')
+      expect(lawyer.user).to.have.property('email')
+      expect(lawyer).to.have.property('createAt')
+      expect(lawyer).to.have.property('updateAt')
     })
-    it('persistUser (error - duplicate entry)', async function () {
+    it('persistLawyer (error - duplicate entry)', async function () {
       const res = await request(httpServer)
         .post(config.ENDPOINT)
         .send(body)
@@ -141,60 +151,63 @@ describe('Models:Lawyer', function () {
       expect(err).to.be.an('object')
       expect(err.message).to.match(/duplicate key value/)
     })
-    it('persistUser (update)', async function () {
+    it('persistLawyer (update)', async function () {
       const body = {
         query: `
-          mutation ($userId: ID, $input: UserInput!) {
-            persistUser(userId: $userId, input: $input) {
-              userId
+          mutation ($lawyerId: ID, $input: LawyerInput!) {
+            persistLawyer(lawyerId: $lawyerId, input: $input) {
+              lawyerId
               name
-              email
-              psw
+              roles
+              user {
+                userId
+                email
+              }
               createAt
               updateAt
             }
           }
         `,
         variables: {
-          userId: user.userId,
+          lawyerId: lawyer.lawyerId,
           input: {
-            name: 'TestCHANGED',
-            email: 'testCHANGED@mail.com',
-            psw: 'testPAsswordChanged'
+            name: 'John Doe 2 CHANGED',
+            roles: ['ADMIN']
           }
         }
       }
       const {
         body: {
-          data: { persistUser }
+          data: { persistLawyer }
         }
       } = await request(httpServer)
         .post(config.ENDPOINT)
         .send(body)
-      expect(persistUser).to.be.not.null
-      expect(persistUser).to.be.an('object')
-      expect(persistUser).to.have.property('createAt')
-      expect(persistUser).to.have.property('updateAt')
-      expect(persistUser.createAt).to.be.not.equal(persistUser.updateAt)
+        .then(handleResponseError)
+      expect(persistLawyer).to.be.not.null
+      expect(persistLawyer).to.be.an('object')
+      expect(persistLawyer).to.have.property('createAt')
+      expect(persistLawyer).to.have.property('updateAt')
+      expect(persistLawyer.createAt).to.be.not.equal(persistLawyer.updateAt)
     })
-    it('deleteUser', async function () {
+    it('deleteLawyer', async function () {
       const query = `
-        mutation ($userId: ID!) {
-          deleteUser(userId: $userId)
+        mutation ($lawyerId: ID!) {
+          deleteLawyer(lawyerId: $lawyerId)
         }
       `
       const {
         body: {
-          data: { deleteUser }
+          data: { deleteLawyer }
         }
       } = await request(httpServer)
         .post(config.ENDPOINT)
         .send({
           query,
-          variables: { userId: user.userId }
+          variables: { lawyerId: lawyer.lawyerId }
         })
-      expect(deleteUser).to.be.not.null
-      expect(deleteUser).to.be.true
+      expect(deleteLawyer).to.be.not.null
+      expect(deleteLawyer).to.be.true
     })
-  })*/
+  })
 })
