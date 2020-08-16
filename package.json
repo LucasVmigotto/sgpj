@@ -1,7 +1,22 @@
 {
   "name": "sgpj",
   "license": "MIT",
+  "author": {
+    "name": "Lucas Vidor Migotto",
+    "email": "lvmigotto1@gmail.com"
+  },
+  "scripts": {
+    "postinstall": "lerna bootstrap",
+    "build": "lerna run --stream build",
+    "lint": "lerna run --stream lint",
+    "migrate": "lerna run --stream migrate",
+    "test": "lerna run --stream test"
+  },
   "dependencies": {
-    "lerna": "^3.22.1"
+    "lerna": "^3.20.2"
+  },
+  "engines": {
+    "node": "^14.8.0",
+    "yarn": "^1.22.4"
   }
 }
