@@ -2,16 +2,17 @@ version: '2'
 
 services:
   pg:
-    image: postgres:13
+    image: postgres:11
     environment:
-    - POSTGRES_USER=user
-    - POSTGRES_DB=sgpj_db
+    - POSTGRES_USER
+    - POSTGRES_PASSWORD
+    - POSTGRES_DB
     volumes:
     - pg-data:/var/lib/postgresql/data
 
   pgcli:
     image: pygmy/pgcli
-    command: postgresql://user@pg/sgpj_db
+    command: postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@pg/$POSTGRES_DB
     stdin_open: true
     tty: true
     volumes:
@@ -31,10 +32,10 @@ services:
     working_dir: /app/packages/api
     tty: true
     environment:
-    - HTTP_PROXY
-    - HTTPS_PROXY
-    - NO_PROXY
     - LOCAL_USER_ID
+    - POSTGRES_USER
+    - POSTGRES_PASSWORD
+    - POSTGRES_DB
     ports:
     - 4000:4000
     - 9229:9229
@@ -54,9 +55,6 @@ services:
     command: yarn dev
     working_dir: /app/packages/app
     environment:
-    - HTTP_PROXY
-    - HTTPS_PROXY
-    - NO_PROXY
     - LOCAL_USER_ID
     ports:
     - 4001:4001
