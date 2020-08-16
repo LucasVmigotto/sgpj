@@ -22,7 +22,7 @@ const typeDefs = gql`
   input LawyerInput {
     name: String!
     roles: [String]!
-    user: UserInput!
+    user: UserInput
   }
 
   extend type Query {
@@ -115,7 +115,7 @@ const resolvers = {
             'lawyer_id', 'name', 'roles', 'create_at', 'update_at', 'user_id'
           ])
         if (graphqlFields(info).user) {
-          const [user] = knex('user')
+          const [user] = await knex('user')
             .select('user_id', 'email')
             .where({ user_id: newLawyer.user_id })
           newLawyer = {
@@ -126,6 +126,9 @@ const resolvers = {
         }
         return camelizeKeys(newLawyer)
       } else {
+        if (!input.user) {
+          throw new Error('To create a new Lawyer, first you must inform the user access info')
+        }
         const user = {
           email: input.user.email,
           password: cipher(input.user.password)
