@@ -1,6 +1,7 @@
 const graphqlFields = require('graphql-fields')
 const config = require('../config')
 const crypto = require('crypto')
+const { decamelize } = require('humps')
 
 const requestedFields = info => {
   const fields = graphqlFields(info)
