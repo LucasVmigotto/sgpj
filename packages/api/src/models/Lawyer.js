@@ -1,5 +1,5 @@
 const { gql } = require('apollo-server-express')
-// const { camelizeKeys } = require('humps')
+const { camelizeKeys } = require('humps')
 // const { requestedFields } = require('../utils')
 // const debug = require('debug')('api:[models]user=>')
 
@@ -36,12 +36,35 @@ const typeDefs = gql`
 `
 
 const resolvers = {
-  Lawyer: {
-    user: ({ lawyerId }, args, { knex }) => {}
-  },
   Query: {
-    async lawyer (_, { lawyerId }, { knex }) {},
-    async lawyers (_, { limit = 100, offset = 0 }, { knex }) {}
+    async lawyer (_, { lawyerId }, { knex }) {
+      const [data] = await knex('lawyer')
+        .select(
+          'lawyer.lawyer_id',
+          'lawyer.name',
+          'lawyer.roles',
+          'lawyer.create_at',
+          'lawyer.update_at',
+          'user.user_id',
+          'user.email'
+        )
+        .where({ 'lawyer.lawyer_id': lawyerId })
+        .join('user', { 'lawyer.user_id': 'user.user_id' })
+      return {
+        lawyerId: data.lawyer_id,
+        name: data.name,
+        roles: data.roles,
+        createAt: data.create_at,
+        updateAt: data.update_at,
+        user: {
+          userId: data.user_id,
+          email: data.email
+        }
+      }
+    },
+    async lawyers (_, { limit = 100, offset = 0 }, { knex }) {
+      return { count: 1, items: [] }
+    }
   },
   Mutation: {
     async persistLawyer (_, { lawyerId, input }, { knex }) {},
