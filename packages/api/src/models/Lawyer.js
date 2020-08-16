@@ -63,7 +63,36 @@ const resolvers = {
       }
     },
     async lawyers (_, { limit = 100, offset = 0 }, { knex }) {
-      return { count: 1, items: [] }
+      const data = await knex('lawyer')
+        .select(
+          'lawyer.lawyer_id',
+          'lawyer.name',
+          'lawyer.roles',
+          'lawyer.create_at',
+          'lawyer.update_at',
+          'user.user_id',
+          'user.email'
+        )
+        .join('user', { 'lawyer.user_id': 'user.user_id' })
+        .limit(limit)
+        .offset(offset)
+      const [{ count }] = await knex('lawyer').count('lawyer_id')
+      return {
+        count,
+        items: data.map(el => {
+          return {
+            lawyerId: el.lawyer_id,
+            name: el.name,
+            roles: el.roles,
+            createAt: el.create_at,
+            updateAt: el.update_at,
+            user: {
+              userId: el.user_id,
+              email: el.email
+            }
+          }
+        })
+      }
     }
   },
   Mutation: {
