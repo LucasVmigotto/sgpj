@@ -2,7 +2,6 @@ const { gql } = require('apollo-server-express')
 const { camelizeKeys } = require('humps')
 const { cipher } = require('../utils')
 const graphqlFields = require('graphql-fields')
-// const debug = require('debug')('api:[models]user=>')
 
 const typeDefs = gql`
   type Lawyer {

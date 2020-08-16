@@ -14,7 +14,6 @@ query Lawyers {
     }
   }
 }
-
 query Lawyer {
   lawyer(lawyerId: 1) {
     lawyerId
@@ -31,14 +30,33 @@ query Lawyer {
 
 mutation CreateLawyer {
   persistLawyer(
-    lawyerId: 1,
     input: {
       name: "John Doe 2",
       roles: [],
       user: {
           email: "email@mail.com",
-          password: "senha do john"
+          password: "John's Password"
       }
+    }
+  ) {
+    lawyerId
+    name
+    roles
+    user {
+      userId
+      email
+    }
+    createAt
+    updateAt
+  }
+}
+
+mutation UpdateLawyer {
+  persistLawyer(
+    lawyerId: 2,
+    input: {
+      name: "John Doe 2 CHANGED",
+      roles: ["ADMIN"]
     }
   ) {
     lawyerId
