@@ -72,5 +72,5 @@ mutation UpdateLawyer {
 }
 
 mutation DeleteLawyer {
-  deleteLawyer(lawyerId: 1)
+  deleteLawyer(lawyerId: 2)
 }

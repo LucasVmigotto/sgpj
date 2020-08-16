@@ -151,7 +151,15 @@ const resolvers = {
         }
       }
     },
-    async deleteLawyer (_, { lawyerId }, { knex, logger }) {}
+    async deleteLawyer (_, { lawyerId }, { knex, logger }) {
+      const [{ user_id }] = await knex('lawyer')
+        .select('user_id')
+        .where({ lawyer_id: lawyerId })
+      const data = await knex('user')
+        .where({ user_id })
+        .del()
+      return !!data
+    }
   }
 }
 
