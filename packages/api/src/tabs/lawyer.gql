@@ -1,0 +1,58 @@
+query Lawyers {
+  lawyers(limit: 10, offset: 0) {
+    count
+    items {
+      lawyerId
+      name
+      roles
+      user {
+        userId
+        email
+      }
+      createAt
+      updateAt
+    }
+  }
+}
+
+query Lawyer {
+  lawyer(lawyerId: 1) {
+    lawyerId
+    name
+    roles
+    user {
+      userId
+      email
+    }
+    createAt
+    updateAt
+  }
+}
+
+mutation CreateLawyer {
+  persistLawyer(
+    lawyerId: 1,
+    input: {
+      name: "John Doe 2",
+      roles: [],
+      user: {
+          email: "email@mail.com",
+          password: "senha do john"
+      }
+    }
+  ) {
+    lawyerId
+    name
+    roles
+    user {
+      userId
+      email
+    }
+    createAt
+    updateAt
+  }
+}
+
+mutation DeleteLawyer {
+  deleteLawyer(lawyerId: 1)
+}
