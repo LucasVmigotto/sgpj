@@ -1,7 +1,6 @@
 const {
   expect,
-  request,
-  handleResponseError
+  request
 } = require('../utils')
 const config = require('../../src/config')
 const createApp = require('../../src/app')
@@ -117,7 +116,7 @@ describe('Models:Lawyer', function () {
           name: 'John Doe 2',
           roles: [],
           user: {
-            email: 'email@mail.com',
+            email: `${new Date().getMilliseconds()}@mail.com`,
             password: 'John\'s Password'
           }
         }
@@ -183,7 +182,6 @@ describe('Models:Lawyer', function () {
       } = await request(httpServer)
         .post(config.ENDPOINT)
         .send(body)
-        .then(handleResponseError)
       expect(persistLawyer).to.be.not.null
       expect(persistLawyer).to.be.an('object')
       expect(persistLawyer).to.have.property('createAt')
