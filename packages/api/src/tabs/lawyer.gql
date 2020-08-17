@@ -34,8 +34,8 @@ mutation CreateLawyer {
       name: "John Doe 2",
       roles: [],
       user: {
-          email: "email@mail.com",
-          password: "John's Password"
+        email: "email@mail.com",
+        password: "John's Password"
       }
     }
   ) {
