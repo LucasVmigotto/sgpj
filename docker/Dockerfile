@@ -1,6 +1,6 @@
 FROM node:14.8-alpine
 
-RUN apk add --no-cache bash curl git shadow tar
+RUN apk add --no-cache bash curl git shadow python make g++
 
 ENV GOSU_VERSION 1.10
 RUN curl -sS -Lo /usr/bin/gosu https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64
