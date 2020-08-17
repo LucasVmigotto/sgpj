@@ -1,0 +1,16 @@
+query Login {
+  login(user: {
+    email: "email@mail.com",
+    password: "John's Password"
+  }) {
+    lawyerId
+    name
+    roles
+    user {
+      userId
+      email
+    }
+    createAt
+    updateAt
+  }
+}
