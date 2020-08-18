@@ -1,9 +1,12 @@
 const {
   expect,
-  request
+  request,
+  handleResponseError
 } = require('../utils')
 const config = require('../../src/config')
 const createApp = require('../../src/app')
+
+const generateOAB = () => `${Math.floor(Math.random() * 10000000)}`
 
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
@@ -102,6 +105,7 @@ describe('Models:Lawyer', function () {
             lawyerId
             name
             roles
+            oab
             user {
               userId
               email
@@ -118,7 +122,8 @@ describe('Models:Lawyer', function () {
           user: {
             email: `${new Date().getMilliseconds()}@mail.com`,
             password: 'John\'s Password'
-          }
+          },
+          oab: generateOAB()
         }
       }
     }
@@ -130,11 +135,13 @@ describe('Models:Lawyer', function () {
       } = await request(httpServer)
         .post(config.ENDPOINT)
         .send(body)
+        .then(handleResponseError)
       lawyer = { ...persistLawyer }
       expect(lawyer).to.be.not.null
       expect(lawyer).to.be.an('object')
       expect(lawyer).to.have.property('name')
       expect(lawyer).to.have.property('roles')
+      expect(lawyer).to.have.property('oab')
       expect(lawyer).to.have.property('user')
       expect(lawyer.user).to.have.property('userId')
       expect(lawyer.user).to.have.property('email')
@@ -162,6 +169,7 @@ describe('Models:Lawyer', function () {
                 userId
                 email
               }
+              oab
               createAt
               updateAt
             }
@@ -171,7 +179,8 @@ describe('Models:Lawyer', function () {
           lawyerId: lawyer.lawyerId,
           input: {
             name: 'John Doe 2 CHANGED',
-            roles: ['ADMIN']
+            roles: ['ADMIN'],
+            oab: generateOAB()
           }
         }
       }
