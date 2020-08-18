@@ -5,6 +5,7 @@ query Lawyers {
       lawyerId
       name
       roles
+      oab
       user {
         userId
         email
@@ -19,6 +20,7 @@ query Lawyer {
     lawyerId
     name
     roles
+    oab
     user {
       userId
       email
@@ -33,6 +35,7 @@ mutation CreateLawyer {
     input: {
       name: "John Doe 2",
       roles: [],
+      oab: "7352947"
       user: {
         email: "email@mail.com",
         password: "John's Password"
@@ -42,6 +45,7 @@ mutation CreateLawyer {
     lawyerId
     name
     roles
+    oab
     user {
       userId
       email
@@ -56,12 +60,14 @@ mutation UpdateLawyer {
     lawyerId: 2,
     input: {
       name: "John Doe 2 CHANGED",
-      roles: ["ADMIN"]
+      roles: ["ADMIN"],
+      oab: "8365295"
     }
   ) {
     lawyerId
     name
     roles
+    oab
     user {
       userId
       email
