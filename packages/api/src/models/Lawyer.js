@@ -9,6 +9,7 @@ const typeDefs = gql`
     name: String!
     user: User!
     roles: [String]!
+    oab: String!
     createAt: DateTime!
     updateAt: DateTime!
   }
@@ -22,6 +23,7 @@ const typeDefs = gql`
     name: String!
     roles: [String]!
     user: UserInput
+    oab: String!
   }
 
   extend type Query {
@@ -43,6 +45,7 @@ const resolvers = {
           'lawyer.lawyer_id',
           'lawyer.name',
           'lawyer.roles',
+          'lawyer.oab',
           'lawyer.create_at',
           'lawyer.update_at',
           'user.user_id',
@@ -68,6 +71,7 @@ const resolvers = {
           'lawyer.lawyer_id',
           'lawyer.name',
           'lawyer.roles',
+          'lawyer.oab',
           'lawyer.create_at',
           'lawyer.update_at',
           'user.user_id',
@@ -101,7 +105,8 @@ const resolvers = {
         name: input.name,
         roles: input.roles.length === 0
           ? ['LAWYER']
-          : input.roles
+          : input.roles,
+        oab: input.oab
       }
       if (lawyerId) {
         let [newLawyer] = await knex('lawyer')
@@ -110,9 +115,7 @@ const resolvers = {
             update_at: new Date().toISOString()
           })
           .where({ lawyer_id: lawyerId })
-          .returning([
-            'lawyer_id', 'name', 'roles', 'create_at', 'update_at', 'user_id'
-          ])
+          .returning('*')
         if (graphqlFields(info).user) {
           const [user] = await knex('user')
             .select('user_id', 'email')
@@ -140,9 +143,7 @@ const resolvers = {
             ...lawyer,
             user_id: newUser.user_id
           })
-          .returning([
-            'lawyer_id', 'name', 'roles', 'create_at', 'update_at'
-          ])
+          .returning('*')
         return {
           ...camelizeKeys(newLawyer),
           user: {
