@@ -6,6 +6,15 @@ query Lawyers {
       name
       roles
       oab
+      clients {
+        clientId
+        name
+        cpf
+        email
+        phone
+        createAt
+        updateAt
+      }
       user {
         userId
         email
@@ -21,6 +30,15 @@ query Lawyer {
     name
     roles
     oab
+    clients {
+      clientId
+      name
+      cpf
+      email
+      phone
+      createAt
+      updateAt
+    }
     user {
       userId
       email
