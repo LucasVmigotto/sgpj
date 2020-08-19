@@ -34,6 +34,16 @@ describe('Models:Lawyer', function () {
               lawyerId
               name
               roles
+              oab
+              clients {
+                clientId
+                name
+                cpf
+                email
+                phone
+                createAt
+                updateAt
+              }
               user {
                 userId
                 email
@@ -67,6 +77,16 @@ describe('Models:Lawyer', function () {
             lawyerId
             name
             roles
+            oab
+            clients {
+              clientId
+              name
+              cpf
+              email
+              phone
+              createAt
+              updateAt
+            }
             user {
               userId
               email
@@ -91,8 +111,11 @@ describe('Models:Lawyer', function () {
       expect(item).to.have.property('lawyerId')
       expect(item).to.have.property('name')
       expect(item).to.have.property('user')
+      expect(item).to.have.property('clients')
+      expect(item.clients).to.be.an('array')
       expect(item.user).to.have.property('userId')
       expect(item.user).to.have.property('email')
+      expect(item).to.have.property('oab')
       expect(item).to.have.property('createAt')
       expect(item).to.have.property('updateAt')
       expect(item).to.be.deep.equal(lawyer)
