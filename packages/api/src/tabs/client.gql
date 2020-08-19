@@ -1,0 +1,74 @@
+query Clients {
+  clients(limit: 10, offset: 0) {
+    count
+    items {
+      clientId
+      name
+      cpf
+      email
+      phone
+      createAt
+      updateAt
+    }
+  }
+}
+query Lawyer {
+  lawyer(lawyerId: 1) {
+    clientId
+    name
+    cpf
+    email
+    phone
+    createAt
+    updateAt
+    createAt
+    updateAt
+  }
+}
+
+mutation CreateClient {
+  persistClient(
+    input: {
+      name: 'Client',
+      cpf: `00000000000`,
+      email: `email-sample@mail.com`,
+      phone: `999999999`,
+      lawyerId: 1
+    }
+  ) {
+    clientId
+    name
+    cpf
+    email
+    phone
+    createAt
+    updateAt
+    createAt
+    updateAt
+  }
+}
+
+mutation UpdateClient {
+  persistClient(
+    clientId: 2,
+    input: {
+      name: 'Client CHANGED',
+      cpf: `00000000000`,
+      email: `email-sample-CHANGED@mail.com`,
+      phone: `999999999`,
+      lawyerId: 1
+    }
+  ) {
+    clientId
+    name
+    cpf
+    email
+    phone
+    createAt
+    updateAt
+  }
+}
+
+mutation DeleteClient {
+  deleteClient(clientId: 2)
+}

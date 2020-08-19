@@ -1,6 +1,6 @@
 const { gql } = require('apollo-server-express')
 const { camelizeKeys } = require('humps')
-const { cipher } = require('../utils')
+const { cipher, getClients } = require('../utils')
 const graphqlFields = require('graphql-fields')
 
 const typeDefs = gql`
@@ -10,6 +10,7 @@ const typeDefs = gql`
     user: User!
     roles: [String]!
     oab: String!
+    clients: [Client]!
     createAt: DateTime!
     updateAt: DateTime!
   }
@@ -38,6 +39,12 @@ const typeDefs = gql`
 `
 
 const resolvers = {
+  Lawyer: {
+    clients: ({ lawyerId }, _, { knex }) => {
+      return getClients(knex, lawyerId)
+        .then(res => res.map(el => camelizeKeys(el)))
+    }
+  },
   Query: {
     async lawyer (_, { lawyerId }, { knex }) {
       const [data] = await knex('lawyer')
@@ -59,6 +66,7 @@ const resolvers = {
         roles: data.roles,
         createAt: data.create_at,
         updateAt: data.update_at,
+        oab: data.oab,
         user: {
           userId: data.user_id,
           email: data.email
@@ -90,6 +98,7 @@ const resolvers = {
             roles: el.roles,
             createAt: el.create_at,
             updateAt: el.update_at,
+            oab: el.oab,
             user: {
               userId: el.user_id,
               email: el.email

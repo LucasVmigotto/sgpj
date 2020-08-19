@@ -9,6 +9,19 @@ const cipher = password => {
   return cipher.update(password, 'utf8', 'hex') + cipher.final('hex')
 }
 
+const getClients = async (knex, lawyerId) => await knex('client')
+  .select(
+    'client_id',
+    'name',
+    'cpf',
+    'email',
+    'phone',
+    'create_at',
+    'update_at',
+  )
+  .where({ lawyer_id: lawyerId})
+
 module.exports = {
-  cipher
+  cipher,
+  getClients
 }
