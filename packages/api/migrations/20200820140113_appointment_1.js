@@ -30,7 +30,7 @@ exports.up = async function (knex) {
       event_date: new Date().toISOString(),
       lawyer_id: 1,
       client_id: 1,
-      law_suit_id: 1,
+      law_suit_id: 1
     })
 }
 

@@ -41,7 +41,7 @@ const getAppointments = async (knex, id, identifier) =>
       'description',
       'event_date',
       'create_at',
-      'update_at',
+      'update_at'
     )
     .where(defineType(identifier, id))
 
