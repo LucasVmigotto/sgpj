@@ -18,9 +18,9 @@ const getClients = async (knex, lawyerId) => await knex('client')
     'email',
     'phone',
     'create_at',
-    'update_at',
+    'update_at'
   )
-  .where({ lawyer_id: lawyerId})
+  .where({ lawyer_id: lawyerId })
 
 const getLawSuits = async (knex, clientId) =>
   await knex('law_suit')
@@ -29,7 +29,7 @@ const getLawSuits = async (knex, clientId) =>
       'title',
       'description',
       'create_at',
-      'update_at',
+      'update_at'
     )
     .where({ client_id: clientId })
 

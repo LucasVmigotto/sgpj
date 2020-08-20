@@ -43,7 +43,7 @@ const resolvers = {
           'create_at',
           'update_at'
         )
-        .where({ 'law_suit_id': lawSuitId })
+        .where({ law_suit_id: lawSuitId })
       return {
         lawSuitId: data.law_suit_id,
         title: data.title,

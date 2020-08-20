@@ -127,9 +127,9 @@ describe('Models:Client', function () {
       variables: {
         input: {
           name: 'John Doe 2',
-          cpf: `85743928583`,
+          cpf: '85743928583',
           email: `${new Date().getMilliseconds()}@mail.com`,
-          phone: `987654321`,
+          phone: '987654321',
           lawyerId: 1
         }
       }
