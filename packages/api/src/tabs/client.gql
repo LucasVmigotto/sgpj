@@ -7,6 +7,13 @@ query Clients {
       cpf
       email
       phone
+      lawSuits {
+        lawSuitId
+        title
+        description
+        createAt
+        updateAt
+      }
       createAt
       updateAt
     }
@@ -49,7 +56,7 @@ mutation UpdateClient {
     clientId: 2,
     input: {
       name: "Client CHANGED",
-      cpf: `00000000000",
+      cpf: "00000000000",
       email: "email-sample-CHANGED@mail.com",
       phone: "999999999",
       lawyerId: 1
