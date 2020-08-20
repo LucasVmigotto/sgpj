@@ -1,6 +1,7 @@
 const { gql } = require('apollo-server-express')
 const { camelizeKeys, decamelizeKeys } = require('humps')
 const { getLawSuits, promiseHandler } = require('../utils')
+const { getAppointments } = require('../utils')
 
 const typeDefs = gql`
   type Client {
@@ -10,6 +11,7 @@ const typeDefs = gql`
     email: String
     phone: String!
     lawSuits: [LawSuit]!
+    appointments: [Appointment]!
     createAt: DateTime!
     updateAt: DateTime!
   }
@@ -42,6 +44,9 @@ const resolvers = {
   Client: {
     lawSuits: ({ clientId }, _, { knex }) => {
       return promiseHandler(getLawSuits(knex, clientId))
+    },
+    appointments: ({ clientId }, _, { knex }) => {
+      return promiseHandler(getAppointments(knex, clientId, 'CLIENT'))
     }
   },
   Query: {

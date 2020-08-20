@@ -7,13 +7,6 @@ query Clients {
       cpf
       email
       phone
-      lawSuits {
-        lawSuitId
-        title
-        description
-        createAt
-        updateAt
-      }
       createAt
       updateAt
     }
@@ -26,6 +19,21 @@ query Client {
     cpf
     email
     phone
+      lawSuits {
+      lawSuitId
+      title
+      description
+      createAt
+      updateAt
+    }
+    appointments {
+      appointmentId
+      title
+      description
+      eventDate
+      createAt
+      updateAt
+    }
     createAt
     updateAt
   }
