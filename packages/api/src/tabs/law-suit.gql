@@ -1,0 +1,58 @@
+query LawSuits {
+  lawSuits(limit: 10, offset: 0) {
+    count
+    items {
+      lawSuitId
+      title
+      description
+      createAt
+      updateAt
+    }
+  }
+}
+query LawSuit {
+  lawSuit(lawSuitId: 1) {
+    lawSuitId
+    title
+    description
+    createAt
+    updateAt
+  }
+}
+
+mutation CreateLawSuit {
+  persistLawSuit(
+    input: {
+      title: "Law Suit Title",
+      description: "Law Suit Description",
+      clientId: 1
+    }
+  ) {
+    lawSuitId
+    title
+    description
+    createAt
+    updateAt
+  }
+}
+
+mutation UpdateLawSuit {
+  persistLawSuit(
+    lawSuitId: 2,
+    input: {
+      title: 'Law Suit Title CHANGED',
+      description: "Law Suit Description CHANGED",
+      clientId: 2
+    }
+  ) {
+    lawSuitId
+    title
+    description
+    createAt
+    updateAt
+  }
+}
+
+mutation DeleteLawSuit {
+  deleteLawSuit(lawSuitId: 2)
+}
