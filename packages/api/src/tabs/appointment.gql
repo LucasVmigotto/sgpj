@@ -1,0 +1,68 @@
+query Appointments {
+  appointments(limit: 10, offset: 0) {
+    count
+    items {
+      appointmentId
+      title
+      description
+      eventDate
+      createAt
+      updateAt
+    }
+  }
+}
+query Appointment {
+  appointment(appointmentId: 1) {
+    appointmentId
+    title
+    description
+    eventDate
+    createAt
+    updateAt
+  }
+}
+
+mutation CreateAppointment {
+  persistAppointment(
+    input: {
+      title: "Appointment Title",
+      description: "Appointment Description",
+      eventDate: "2020-12-20T18:21:28.196Z",
+      lawyerId: 1,
+      clientId: 1,
+      lawSuitId: 1
+    }
+  ) {
+    appointmentId
+    title
+    description
+    eventDate
+    createAt
+    updateAt
+  }
+}
+
+mutation UpdateAppointment {
+  persistAppointment(
+    appointmentId: 2,
+    input: {
+      title: "Appointment Title CHANGED",
+      description: "Appointment Description CHANGED",
+      eventDate: "2020-12-20T18:21:28.196Z",
+      lawyerId: 1,
+      clientId: 1,
+      lawSuitId: 1
+    }
+  ) {
+    appointmentId
+    title
+    description
+    eventDate
+    createAt
+    updateAt
+  }
+}
+
+mutation DeleteAppointment {
+  deleteAppointment(appointmentId: 2)
+}

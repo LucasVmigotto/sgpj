@@ -40,7 +40,7 @@ mutation UpdateLawSuit {
   persistLawSuit(
     lawSuitId: 2,
     input: {
-      title: 'Law Suit Title CHANGED',
+      title: "Law Suit Title CHANGED",
       description: "Law Suit Description CHANGED",
       clientId: 2
     }
