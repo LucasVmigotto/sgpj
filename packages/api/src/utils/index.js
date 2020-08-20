@@ -1,5 +1,6 @@
 const config = require('../config')
 const crypto = require('crypto')
+const { camelizeKeys } = require('humps')
 
 const cipher = password => {
   const cipher = crypto.createCipheriv(
@@ -21,7 +22,24 @@ const getClients = async (knex, lawyerId) => await knex('client')
   )
   .where({ lawyer_id: lawyerId})
 
+const getLawSuits = async (knex, clientId) =>
+  await knex('law_suit')
+    .select(
+      'law_suit_id',
+      'title',
+      'description',
+      'create_at',
+      'update_at',
+    )
+    .where({ client_id: clientId })
+
+const promiseHandler = promise =>
+  promise.then(res =>
+    res.map(el => camelizeKeys(el)))
+
 module.exports = {
   cipher,
-  getClients
+  promiseHandler,
+  getClients,
+  getLawSuits
 }
