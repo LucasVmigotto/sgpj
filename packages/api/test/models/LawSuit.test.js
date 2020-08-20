@@ -103,7 +103,7 @@ describe('Models:LawSuit', function () {
       variables: {
         input: {
           title: 'Law Suit Title',
-          description: 'Law Suit Describe',
+          description: 'Law Suit Description',
           clientId: 1
         }
       }
@@ -142,7 +142,7 @@ describe('Models:LawSuit', function () {
           lawSuitId: lawSuit.lawSuitId,
           input: {
             title: 'Law Suit Title CHANGED',
-            description: 'Law Suit Describe CHANGED',
+            description: 'Law Suit Description CHANGED',
             clientId: 1
           }
         }

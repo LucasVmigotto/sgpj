@@ -6,15 +6,6 @@ query Lawyers {
       name
       roles
       oab
-      clients {
-        clientId
-        name
-        cpf
-        email
-        phone
-        createAt
-        updateAt
-      }
       user {
         userId
         email
@@ -36,6 +27,14 @@ query Lawyer {
       cpf
       email
       phone
+      createAt
+      updateAt
+    }
+    appointments {
+      appointmentId
+      title
+      description
+      eventDate
       createAt
       updateAt
     }

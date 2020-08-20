@@ -15,6 +15,14 @@ query LawSuit {
     lawSuitId
     title
     description
+    appointments {
+      appointmentId
+      title
+      description
+      eventDate
+      createAt
+      updateAt
+    }
     createAt
     updateAt
   }
@@ -40,7 +48,7 @@ mutation UpdateLawSuit {
   persistLawSuit(
     lawSuitId: 2,
     input: {
-      title: 'Law Suit Title CHANGED',
+      title: "Law Suit Title CHANGED",
       description: "Law Suit Description CHANGED",
       clientId: 2
     }
