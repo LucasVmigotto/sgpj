@@ -1,7 +1,5 @@
 const { gql } = require('apollo-server-express')
 const { camelizeKeys, decamelizeKeys } = require('humps')
-const { cipher } = require('../utils')
-const graphqlFields = require('graphql-fields')
 
 const typeDefs = gql`
   type Client {
