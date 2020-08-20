@@ -7,20 +7,25 @@ query Clients {
       cpf
       email
       phone
+      lawSuits {
+        lawSuitId
+        title
+        description
+        createAt
+        updateAt
+      }
       createAt
       updateAt
     }
   }
 }
-query Lawyer {
-  lawyer(lawyerId: 1) {
+query Client {
+  client(clientId: 1) {
     clientId
     name
     cpf
     email
     phone
-    createAt
-    updateAt
     createAt
     updateAt
   }
@@ -29,10 +34,10 @@ query Lawyer {
 mutation CreateClient {
   persistClient(
     input: {
-      name: 'Client',
-      cpf: `00000000000`,
-      email: `email-sample@mail.com`,
-      phone: `999999999`,
+      name: "Client",
+      cpf: "00000000000",
+      email: "email-sample@mail.com",
+      phone: "999999999",
       lawyerId: 1
     }
   ) {
@@ -43,8 +48,6 @@ mutation CreateClient {
     phone
     createAt
     updateAt
-    createAt
-    updateAt
   }
 }
 
@@ -52,10 +55,10 @@ mutation UpdateClient {
   persistClient(
     clientId: 2,
     input: {
-      name: 'Client CHANGED',
-      cpf: `00000000000`,
-      email: `email-sample-CHANGED@mail.com`,
-      phone: `999999999`,
+      name: "Client CHANGED",
+      cpf: "00000000000",
+      email: "email-sample-CHANGED@mail.com",
+      phone: "999999999",
       lawyerId: 1
     }
   ) {

@@ -1,6 +1,6 @@
 const { gql } = require('apollo-server-express')
 const { camelizeKeys } = require('humps')
-const { cipher, getClients } = require('../utils')
+const { cipher, getClients, promiseHandler } = require('../utils')
 const graphqlFields = require('graphql-fields')
 
 const typeDefs = gql`
@@ -41,8 +41,7 @@ const typeDefs = gql`
 const resolvers = {
   Lawyer: {
     clients: ({ lawyerId }, _, { knex }) => {
-      return getClients(knex, lawyerId)
-        .then(res => res.map(el => camelizeKeys(el)))
+      return promiseHandler(getClients(knex, lawyerId))
     }
   },
   Query: {
