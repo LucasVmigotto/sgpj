@@ -34,6 +34,13 @@ describe('Models:Client', function () {
               cpf
               email
               phone
+              lawSuits {
+                lawSuitId
+                title
+                description
+                createAt
+                updateAt
+              }
               createAt
               updateAt
             }
@@ -65,6 +72,13 @@ describe('Models:Client', function () {
             cpf
             email
             phone
+            lawSuits {
+              lawSuitId
+              title
+              description
+              createAt
+              updateAt
+            }
             createAt
             updateAt
           }
@@ -87,6 +101,8 @@ describe('Models:Client', function () {
       expect(item).to.have.property('cpf')
       expect(item).to.have.property('email')
       expect(item).to.have.property('phone')
+      expect(item).to.have.property('lawSuits')
+      expect(item.lawSuits).to.be.an('array')
       expect(item).to.have.property('createAt')
       expect(item).to.have.property('updateAt')
       expect(item).to.be.deep.equal(client)
