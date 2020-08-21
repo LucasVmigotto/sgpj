@@ -62,5 +62,35 @@ describe('Models:User', function () {
       expect(login).to.be.haveOwnProperty('createAt')
       expect(login).to.be.haveOwnProperty('updateAt')
     })
+    it('login - fail', async function () {
+      const body = {
+        query: `
+          query ($input: UserInput!) {
+            login(input: $input) {
+              lawyerId
+              name
+              roles
+              user {
+                userId
+                email
+              }
+              createAt
+              updateAt
+            }
+          }
+        `,
+        variables: {
+          input: {
+            email: 'error@error.err',
+            password: 'error'
+          }
+        }
+      }
+      const { body: { errors: [{ message }] } } = await request(httpServer)
+        .post(config.ENDPOINT)
+        .send(body)
+      expect(message).to.be.not.null
+      expect(message).to.match(/Email or Password invalid/)
+    })
   })
 })
