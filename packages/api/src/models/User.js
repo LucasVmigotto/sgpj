@@ -26,37 +26,30 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     async login (_, { input }, { knex }) {
-      const [{ user_id: userId }] = await knex('user')
-        .select('user_id')
+      const [res] = await knex('user')
+        .select('lawyer_id')
         .where({
           ...input,
           password: cipher(input.password)
         })
-      if (!userId) {
+      if (!res) {
         throw new Error('Email or Password invalid')
       }
       const [data] = await knex('lawyer')
         .select(
-          'lawyer.lawyer_id',
-          'lawyer.name',
-          'lawyer.roles',
-          'lawyer.create_at',
-          'lawyer.update_at',
-          'user.user_id',
-          'user.email'
+          'lawyer_id',
+          'name',
+          'roles',
+          'create_at',
+          'update_at'
         )
-        .where({ 'lawyer.user_id': userId })
-        .join('user', { 'lawyer.user_id': 'user.user_id' })
+        .where({ 'lawyer.lawyer_id': res.lawyer_id })
       return {
         lawyerId: data.lawyer_id,
         name: data.name,
         roles: data.roles,
         createAt: data.create_at,
-        updateAt: data.update_at,
-        user: {
-          userId: data.user_id,
-          email: data.email
-        }
+        updateAt: data.update_at
       }
     }
   }
