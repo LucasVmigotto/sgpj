@@ -45,6 +45,14 @@ const getAppointments = async (knex, id, identifier) =>
     )
     .where(defineType(identifier, id))
 
+const getUser = async (knex, lawyerId) =>
+  await knex('user')
+    .select(
+      'user_id',
+      'email'
+    )
+    .where({ lawyer_id: lawyerId })
+
 const defineType = (identifier, id) => {
   if (identifier === 'LAWYER') {
     return { lawyer_id: id }
@@ -67,5 +75,6 @@ module.exports = {
   promiseHandler,
   getClients,
   getLawSuits,
-  getAppointments
+  getAppointments,
+  getUser
 }
