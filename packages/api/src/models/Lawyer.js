@@ -3,10 +3,10 @@ const { camelizeKeys } = require('humps')
 const {
   cipher,
   getClients,
+  getUser,
   getAppointments,
   promiseHandler
 } = require('../utils')
-const graphqlFields = require('graphql-fields')
 
 const typeDefs = gql`
   type Lawyer {
@@ -46,6 +46,10 @@ const typeDefs = gql`
 
 const resolvers = {
   Lawyer: {
+    user: async ({ lawyerId }, _, { knex }) => {
+      const [user] = await promiseHandler(getUser(knex, lawyerId))
+      return user
+    },
     clients: ({ lawyerId }, _, { knex }) => {
       return promiseHandler(getClients(knex, lawyerId))
     },
@@ -57,43 +61,33 @@ const resolvers = {
     async lawyer (_, { lawyerId }, { knex }) {
       const [data] = await knex('lawyer')
         .select(
-          'lawyer.lawyer_id',
-          'lawyer.name',
-          'lawyer.roles',
-          'lawyer.oab',
-          'lawyer.create_at',
-          'lawyer.update_at',
-          'user.user_id',
-          'user.email'
+          'lawyer_id',
+          'name',
+          'roles',
+          'oab',
+          'create_at',
+          'update_at'
         )
         .where({ 'lawyer.lawyer_id': lawyerId })
-        .join('user', { 'lawyer.user_id': 'user.user_id' })
       return {
         lawyerId: data.lawyer_id,
         name: data.name,
         roles: data.roles,
-        createAt: data.create_at,
-        updateAt: data.update_at,
         oab: data.oab,
-        user: {
-          userId: data.user_id,
-          email: data.email
-        }
+        createAt: data.create_at,
+        updateAt: data.update_at
       }
     },
     async lawyers (_, { limit = 100, offset = 0 }, { knex }) {
       const data = await knex('lawyer')
         .select(
-          'lawyer.lawyer_id',
-          'lawyer.name',
-          'lawyer.roles',
-          'lawyer.oab',
-          'lawyer.create_at',
-          'lawyer.update_at',
-          'user.user_id',
-          'user.email'
+          'lawyer_id',
+          'name',
+          'roles',
+          'oab',
+          'create_at',
+          'update_at'
         )
-        .join('user', { 'lawyer.user_id': 'user.user_id' })
         .limit(limit)
         .offset(offset)
       const [{ count }] = await knex('lawyer').count('lawyer_id')
@@ -104,13 +98,9 @@ const resolvers = {
             lawyerId: el.lawyer_id,
             name: el.name,
             roles: el.roles,
-            createAt: el.create_at,
-            updateAt: el.update_at,
             oab: el.oab,
-            user: {
-              userId: el.user_id,
-              email: el.email
-            }
+            createAt: el.create_at,
+            updateAt: el.update_at
           }
         })
       }
@@ -126,23 +116,13 @@ const resolvers = {
         oab: input.oab
       }
       if (lawyerId) {
-        let [newLawyer] = await knex('lawyer')
+        const [newLawyer] = await knex('lawyer')
           .update({
             ...lawyer,
             update_at: new Date().toISOString()
           })
           .where({ lawyer_id: lawyerId })
           .returning('*')
-        if (graphqlFields(info).user) {
-          const [user] = await knex('user')
-            .select('user_id', 'email')
-            .where({ user_id: newLawyer.user_id })
-          newLawyer = {
-            ...newLawyer,
-            user: camelizeKeys(user)
-          }
-          delete newLawyer.user_id
-        }
         return camelizeKeys(newLawyer)
       } else {
         if (!input.user) {
@@ -152,15 +132,15 @@ const resolvers = {
           email: input.user.email,
           password: cipher(input.user.password)
         }
-        const [newUser] = await knex('user')
-          .insert({ ...user })
-          .returning(['user_id', 'email'])
         const [newLawyer] = await knex('lawyer')
-          .insert({
-            ...lawyer,
-            user_id: newUser.user_id
-          })
+          .insert({ ...lawyer })
           .returning('*')
+        const [newUser] = await knex('user')
+          .insert({
+            ...user,
+            lawyer_id: newLawyer.lawyer_id
+          })
+          .returning(['user_id', 'email'])
         return {
           ...camelizeKeys(newLawyer),
           user: {
@@ -170,11 +150,8 @@ const resolvers = {
       }
     },
     async deleteLawyer (_, { lawyerId }, { knex, logger }) {
-      const [{ user_id: userId }] = await knex('lawyer')
-        .select('user_id')
+      const data = await knex('lawyer')
         .where({ lawyer_id: lawyerId })
-      const data = await knex('user')
-        .where({ user_id: userId })
         .del()
       return !!data
     }

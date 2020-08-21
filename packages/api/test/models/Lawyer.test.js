@@ -35,6 +35,10 @@ describe('Models:Lawyer', function () {
               name
               roles
               oab
+              user {
+                userId
+                email
+              }
               clients {
                 clientId
                 name
@@ -43,10 +47,6 @@ describe('Models:Lawyer', function () {
                 phone
                 createAt
                 updateAt
-              }
-              user {
-                userId
-                email
               }
               createAt
               updateAt
@@ -111,10 +111,11 @@ describe('Models:Lawyer', function () {
       expect(item).to.have.property('lawyerId')
       expect(item).to.have.property('name')
       expect(item).to.have.property('user')
-      expect(item).to.have.property('clients')
-      expect(item.clients).to.be.an('array')
+      expect(item.user).to.be.an('object')
       expect(item.user).to.have.property('userId')
       expect(item.user).to.have.property('email')
+      expect(item).to.have.property('clients')
+      expect(item.clients).to.be.an('array')
       expect(item).to.have.property('oab')
       expect(item).to.have.property('createAt')
       expect(item).to.have.property('updateAt')
