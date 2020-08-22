@@ -1,6 +1,7 @@
 {
   "name": "sgpj",
   "license": "MIT",
+  "useWorkspaces": true,
   "author": {
     "name": "Lucas Vidor Migotto",
     "email": "lvmigotto1@gmail.com"
