@@ -1,7 +1,8 @@
 const {
   expect,
   request,
-  handleResponseError
+  handleResponseError,
+  generateToken
 } = require('../utils')
 const config = require('../../src/config')
 const createApp = require('../../src/app')
@@ -9,6 +10,7 @@ const createApp = require('../../src/app')
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
 describe('Models:Appointment', function () {
+  const token = generateToken(true)
   let knex, httpServer
   before(function () {
     const {
@@ -25,10 +27,46 @@ describe('Models:Appointment', function () {
     let appointment = null
     it('appointments', async function () {
       const query = `
-        query {
-          appointments {
-            count
-            items {
+        query ($token: String!) {
+          viewer(token: $token) {
+            appointments {
+              count
+              items {
+                appointmentId
+                title
+                description
+                eventDate
+                createAt
+                updateAt
+              }
+            }
+          }
+        }
+      `
+      const {
+        body: {
+          data: {
+            viewer: { appointments: { count, items } }
+          }
+        }
+      } = await request(httpServer)
+        .post(config.ENDPOINT)
+        .send({
+          query,
+          variables: { token }
+        })
+        .then(handleResponseError)
+      appointment = { ...items[0] }
+      expect(count).to.be.not.null
+      expect(count).to.be.an('number')
+      expect(items).to.be.not.null
+      expect(items).to.be.an('array')
+    })
+    it('appointment', async function () {
+      const query = `
+        query ($token: String!, $appointmentId: ID!) {
+          viewer(token: $token) {
+            appointment (appointmentId: $appointmentId) {
               appointmentId
               title
               description
@@ -41,43 +79,16 @@ describe('Models:Appointment', function () {
       `
       const {
         body: {
-          data: {
-            appointments: { count, items }
-          }
-        }
-      } = await request(httpServer)
-        .post(config.ENDPOINT)
-        .send({ query })
-        .then(handleResponseError)
-      appointment = { ...items[0] }
-      expect(count).to.be.not.null
-      expect(count).to.be.an('number')
-      expect(items).to.be.not.null
-      expect(items).to.be.an('array')
-    })
-    it('appointment', async function () {
-      console.log(appointment)
-      const query = `
-        query ($appointmentId: ID!) {
-          appointment (appointmentId: $appointmentId) {
-            appointmentId
-            title
-            description
-            eventDate
-            createAt
-            updateAt
-          }
-        }
-      `
-      const {
-        body: {
-          data: { appointment: item }
+          data: { viewer: { appointment: item } }
         }
       } = await request(httpServer)
         .post(config.ENDPOINT)
         .send({
           query,
-          variables: { appointmentId: appointment.appointmentId }
+          variables: {
+            token,
+            appointmentId: appointment.appointmentId
+          }
         })
         .then(handleResponseError)
       expect(item).to.be.not.null
@@ -94,7 +105,8 @@ describe('Models:Appointment', function () {
     let appointment = null
     const body = {
       query: `
-        mutation ($input: AppointmentInput!) {
+        mutation ($token: String!, $input: AppointmentInput!) {
+          authorization(token: $token) { lawyerId }
           persistAppointment(input: $input) {
             appointmentId
             title
@@ -106,6 +118,7 @@ describe('Models:Appointment', function () {
         }
       `,
       variables: {
+        token,
         input: {
           title: 'Appointment Title',
           description: 'Appointment Description',
@@ -138,7 +151,8 @@ describe('Models:Appointment', function () {
     it('persistAppointment (update)', async function () {
       const body = {
         query: `
-          mutation ($appointmentId: ID, $input: AppointmentInput!) {
+          mutation ($token: String!, $appointmentId: ID, $input: AppointmentInput!) {
+            authorization(token: $token) { lawyerId }
             persistAppointment(appointmentId: $appointmentId, input: $input) {
               appointmentId
               title
@@ -150,6 +164,7 @@ describe('Models:Appointment', function () {
           }
         `,
         variables: {
+          token,
           appointmentId: appointment.appointmentId,
           input: {
             title: 'Appointment Title CHANGED',
@@ -177,7 +192,8 @@ describe('Models:Appointment', function () {
     })
     it('deleteAppointment', async function () {
       const query = `
-        mutation ($appointmentId: ID!) {
+        mutation ($token: String!, $appointmentId: ID!) {
+          authorization(token: $token) { lawyerId }
           deleteAppointment(appointmentId: $appointmentId)
         }
       `
@@ -189,7 +205,10 @@ describe('Models:Appointment', function () {
         .post(config.ENDPOINT)
         .send({
           query,
-          variables: { appointmentId: appointment.appointmentId }
+          variables: {
+            token,
+            appointmentId: appointment.appointmentId
+          }
         })
         .then(handleResponseError)
       expect(deleteAppointment).to.be.not.null
