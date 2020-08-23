@@ -1,7 +1,8 @@
 const {
   expect,
   request,
-  handleResponseError
+  handleResponseError,
+  generateToken
 } = require('../utils')
 const config = require('../../src/config')
 const createApp = require('../../src/app')
@@ -11,6 +12,7 @@ const generateOAB = () => `${Math.floor(Math.random() * 10000000)}`
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
 describe('Models:Lawyer', function () {
+  const token = generateToken(true)
   let knex, httpServer
   before(function () {
     const {
@@ -27,29 +29,31 @@ describe('Models:Lawyer', function () {
     let lawyer = null
     it('lawyers', async function () {
       const query = `
-        query {
-          lawyers {
-            count
-            items {
-              lawyerId
-              name
-              roles
-              oab
-              user {
-                userId
-                email
-              }
-              clients {
-                clientId
+        query ($token: String!) {
+          viewer(token: $token) {
+            lawyers {
+              count
+              items {
+                lawyerId
                 name
-                cpf
-                email
-                phone
+                roles
+                oab
+                user {
+                  userId
+                  email
+                }
+                clients {
+                  clientId
+                  name
+                  cpf
+                  email
+                  phone
+                  createAt
+                  updateAt
+                }
                 createAt
                 updateAt
               }
-              createAt
-              updateAt
             }
           }
         }
@@ -57,12 +61,15 @@ describe('Models:Lawyer', function () {
       const {
         body: {
           data: {
-            lawyers: { count, items }
+            viewer: { lawyers: { count, items } }
           }
         }
       } = await request(httpServer)
         .post(config.ENDPOINT)
-        .send({ query })
+        .send({
+          query,
+          variables: { token }
+        })
         .then(handleResponseError)
       lawyer = { ...items[0] }
       expect(count).to.be.not.null
@@ -72,39 +79,44 @@ describe('Models:Lawyer', function () {
     })
     it('lawyer', async function () {
       const query = `
-        query ($lawyerId: ID!) {
-          lawyer (lawyerId: $lawyerId) {
-            lawyerId
-            name
-            roles
-            oab
-            clients {
-              clientId
+        query ($lawyerId: ID!, $token: String!) {
+          viewer(token: $token) {
+            lawyer (lawyerId: $lawyerId) {
+              lawyerId
               name
-              cpf
-              email
-              phone
+              roles
+              oab
+              clients {
+                clientId
+                name
+                cpf
+                email
+                phone
+                createAt
+                updateAt
+              }
+              user {
+                userId
+                email
+              }
               createAt
               updateAt
             }
-            user {
-              userId
-              email
-            }
-            createAt
-            updateAt
           }
         }
       `
       const {
         body: {
-          data: { lawyer: item }
+          data: { viewer: { lawyer: item } }
         }
       } = await request(httpServer)
         .post(config.ENDPOINT)
         .send({
           query,
-          variables: { lawyerId: lawyer.lawyerId }
+          variables: {
+            token,
+            lawyerId: lawyer.lawyerId
+          }
         })
         .then(handleResponseError)
       expect(item).to.be.not.null
@@ -126,7 +138,8 @@ describe('Models:Lawyer', function () {
     let lawyer = null
     const body = {
       query: `
-        mutation ($input: LawyerInput!) {
+        mutation ($input: LawyerInput!, $token: String!) {
+          authorization(token: $token) { lawyerId }
           persistLawyer(input: $input) {
             lawyerId
             name
@@ -142,6 +155,7 @@ describe('Models:Lawyer', function () {
         }
       `,
       variables: {
+        token,
         input: {
           name: 'John Doe 2',
           roles: [],
@@ -174,21 +188,11 @@ describe('Models:Lawyer', function () {
       expect(lawyer).to.have.property('createAt')
       expect(lawyer).to.have.property('updateAt')
     })
-    /*
-    it('persistLawyer (error - duplicate entry)', async function () {
-      const res = await request(httpServer)
-        .post(config.ENDPOINT)
-        .send(body)
-      const err = res.body.errors[0]
-      expect(err).to.be.not.null
-      expect(err).to.be.an('object')
-      expect(err.message).to.match(/duplicate key value/)
-    })
-    */
     it('persistLawyer (update)', async function () {
       const body = {
         query: `
-          mutation ($lawyerId: ID, $input: LawyerInput!) {
+          mutation ($token: String!, $lawyerId: ID, $input: LawyerInput!) {
+            authorization(token: $token) { lawyerId }
             persistLawyer(lawyerId: $lawyerId, input: $input) {
               lawyerId
               name
@@ -204,6 +208,7 @@ describe('Models:Lawyer', function () {
           }
         `,
         variables: {
+          token,
           lawyerId: lawyer.lawyerId,
           input: {
             name: 'John Doe 2 CHANGED',
@@ -218,6 +223,7 @@ describe('Models:Lawyer', function () {
         }
       } = await request(httpServer)
         .post(config.ENDPOINT)
+        .set('authorization', `Bearer ${token}`)
         .send(body)
         .then(handleResponseError)
       expect(persistLawyer).to.be.not.null
@@ -228,7 +234,8 @@ describe('Models:Lawyer', function () {
     })
     it('deleteLawyer', async function () {
       const query = `
-        mutation ($lawyerId: ID!) {
+        mutation ($token: String!, $lawyerId: ID!) {
+          authorization(token: $token) { lawyerId }
           deleteLawyer(lawyerId: $lawyerId)
         }
       `
@@ -240,7 +247,10 @@ describe('Models:Lawyer', function () {
         .post(config.ENDPOINT)
         .send({
           query,
-          variables: { lawyerId: lawyer.lawyerId }
+          variables: {
+            token,
+            lawyerId: lawyer.lawyerId
+          }
         })
         .then(handleResponseError)
       expect(deleteLawyer).to.be.not.null

@@ -1,6 +1,8 @@
 const { gql } = require('apollo-server-express')
 const { camelizeKeys } = require('humps')
+const { hasAuthorization } = require('../security')
 const {
+  UserTypes,
   cipher,
   getClients,
   getUser,
@@ -33,7 +35,7 @@ const typeDefs = gql`
     oab: String!
   }
 
-  extend type Query {
+  extend type Viewer {
     lawyer(lawyerId: ID!): Lawyer!
     lawyers(limit: Int, offset: Int): LawyerList!
   }
@@ -57,7 +59,7 @@ const resolvers = {
       return promiseHandler(getAppointments(knex, lawyerId, 'LAWYER'))
     }
   },
-  Query: {
+  Viewer: {
     async lawyer (_, { lawyerId }, { knex }) {
       const [data] = await knex('lawyer')
         .select(
@@ -107,8 +109,9 @@ const resolvers = {
     }
   },
   Mutation: {
-    async persistLawyer (_, { lawyerId, input }, { knex }, info) {
-      const lawyer = {
+    async persistLawyer (_, { lawyerId, input }, { knex, lawyer }) {
+      hasAuthorization(lawyer)
+      const addLawyer = {
         name: input.name,
         roles: input.roles.length === 0
           ? ['LAWYER']
@@ -118,7 +121,7 @@ const resolvers = {
       if (lawyerId) {
         const [newLawyer] = await knex('lawyer')
           .update({
-            ...lawyer,
+            ...addLawyer,
             update_at: new Date().toISOString()
           })
           .where({ lawyer_id: lawyerId })
@@ -133,7 +136,7 @@ const resolvers = {
           password: cipher(input.user.password)
         }
         const [newLawyer] = await knex('lawyer')
-          .insert({ ...lawyer })
+          .insert({ ...addLawyer })
           .returning('*')
         const [newUser] = await knex('user')
           .insert({
@@ -149,7 +152,8 @@ const resolvers = {
         }
       }
     },
-    async deleteLawyer (_, { lawyerId }, { knex, logger }) {
+    async deleteLawyer (_, { lawyerId }, { knex, lawyer }) {
+      hasAuthorization(lawyer, UserTypes.ADMIN)
       const data = await knex('lawyer')
         .where({ lawyer_id: lawyerId })
         .del()
