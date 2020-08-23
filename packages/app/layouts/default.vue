@@ -30,7 +30,7 @@
         <span
           v-show="!miniVariant"
         >
-          &copy; {{ new Date().getFullYear() }}
+          SGPJ &copy; {{ new Date().getFullYear() }}
         </span>
         <v-spacer />
         <v-btn
@@ -46,7 +46,6 @@
       fixed
       app
     >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title v-text="title" />
     </v-app-bar>
     <v-main>
@@ -61,19 +60,16 @@
 export default {
   data () {
     return {
-      drawer: false,
-      fixed: false,
+      title: 'Sistema Gerenciador de Processos Juridícos',
+      drawer: true,
+      miniVariant: false,
       items: [
         {
           icon: 'mdi-apps',
           title: 'Dashboard',
           to: '/'
         }
-      ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Sistema Gerenciador de Processos Juridícos'
+      ]
     }
   }
 }

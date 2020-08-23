@@ -9,6 +9,7 @@
       sm8
       md6
     >
+      <h1>Index</h1>
     </v-flex>
   </v-layout>
 </template>
