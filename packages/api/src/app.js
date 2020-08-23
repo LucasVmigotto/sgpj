@@ -17,6 +17,7 @@ module.exports = config => {
 
   app.use(cors())
 
+  /* istanbul ignore next */
   const formatError = config.NODE_ENV !== 'test'
     ? err => {
       if (err.extensions.code === 'INTERNAL_SERVER_ERROR') {

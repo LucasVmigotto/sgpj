@@ -87,6 +87,14 @@ describe('Models:Client', function () {
                 createAt
                 updateAt
               }
+              appointments {
+                appointmentId
+                title
+                description
+                eventDate
+                createAt
+                updateAt
+              }
               createAt
               updateAt
             }
@@ -115,9 +123,10 @@ describe('Models:Client', function () {
       expect(item).to.have.property('phone')
       expect(item).to.have.property('lawSuits')
       expect(item.lawSuits).to.be.an('array')
+      expect(item).to.have.property('appointments')
+      expect(item.appointments).to.be.an('array')
       expect(item).to.have.property('createAt')
       expect(item).to.have.property('updateAt')
-      expect(item).to.be.deep.equal(client)
     })
   })
   describe('Mutations', function () {

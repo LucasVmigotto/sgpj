@@ -11,6 +11,7 @@ exports.createKnex = ({ config, logger }) => {
     }
   })
 
+  /* istanbul ignore next */
   knex.on('query-error', (err, { sql, bindings }) => {
     logger.error(err.message, { sql, bindings, detail: err.detail })
   })

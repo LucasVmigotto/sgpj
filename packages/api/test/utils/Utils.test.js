@@ -2,7 +2,7 @@ const { expect } = require('../utils')
 const {
   UserTypes,
   defineType,
-  userInRoles,
+  userInRoles
 } = require('../../src/utils')
 
 /* eslint-env mocha */

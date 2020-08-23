@@ -95,6 +95,14 @@ describe('Models:Lawyer', function () {
                 createAt
                 updateAt
               }
+              appointments {
+                appointmentId
+                title
+                description
+                eventDate
+                createAt
+                updateAt
+              }
               user {
                 userId
                 email
@@ -128,10 +136,11 @@ describe('Models:Lawyer', function () {
       expect(item.user).to.have.property('email')
       expect(item).to.have.property('clients')
       expect(item.clients).to.be.an('array')
+      expect(item).to.have.property('appointments')
+      expect(item.appointments).to.be.an('array')
       expect(item).to.have.property('oab')
       expect(item).to.have.property('createAt')
       expect(item).to.have.property('updateAt')
-      expect(item).to.be.deep.equal(lawyer)
     })
   })
   describe('Mutations', function () {
@@ -187,6 +196,24 @@ describe('Models:Lawyer', function () {
       expect(lawyer.user).to.have.property('email')
       expect(lawyer).to.have.property('createAt')
       expect(lawyer).to.have.property('updateAt')
+    })
+    it('persistLawyer (create)', async function () {
+      const { body: { errors: [{ message }] } } = await request(httpServer)
+        .post(config.ENDPOINT)
+        .send({
+          query: body.query,
+          variables: {
+            token,
+            input: {
+              name: 'John Doe 2 CHANGED',
+              roles: ['ADMIN'],
+              oab: generateOAB()
+            }
+          }
+        })
+      expect(message).to.be.not.null
+      expect(message)
+        .to.match(/To create a new Lawyer, first you must inform the user access info/)
     })
     it('persistLawyer (update)', async function () {
       const body = {

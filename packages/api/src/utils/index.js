@@ -65,7 +65,7 @@ const defineType = (identifier, id) => {
   if (identifier === 'LAWSUIT') {
     return { law_suit_id: id }
   }
-  throw new Error('Unvalid option selected')
+  throw new Error('Invalid option selected')
 }
 
 const promiseHandler = promise =>
@@ -89,6 +89,7 @@ module.exports = {
   signJWT,
   UserTypes,
   userInRoles,
+  defineType,
   promiseHandler,
   getClients,
   getLawSuits,

@@ -1,7 +1,8 @@
 const { verify } = require('jsonwebtoken')
 const config = require('./config')
+const { userInRoles } = require('./utils')
 
-const verifyToken = (token, secret = config.JWT_SECRET) =>
+const verifyToken = (token, secret) =>
   new Promise((resolve, reject) => {
     verify(token, secret, (err, decodedToken) => {
       if (err) {
@@ -52,12 +53,13 @@ const tokenExpressResolver = (req, _, next) => {
 const hasAuthorization = (
   user, role, message = 'Access denied'
 ) => {
-  if (!user) {
+  if (!user || !userInRoles(user, role)) {
     throw new Error(message)
   }
 }
 
 module.exports = {
+  parseAuthorization,
   tokenGraphQLResolver,
   tokenExpressResolver,
   hasAuthorization
