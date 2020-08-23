@@ -1,16 +1,39 @@
-query Login {
-  login(user: {
-    email: "email@mail.com",
-    password: "John's Password"
-  }) {
+mutation AuthorizationADMIN ($admin: String!) {
+  authorization(token: $admin) {
     lawyerId
     name
     roles
-    user {
-      userId
-      email
-    }
     createAt
     updateAt
+  }
+}
+
+mutation AuthorizationLAWYER ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+    name
+    roles
+    createAt
+    updateAt
+  }
+}
+
+mutation Login {
+  login(credentials: {
+    email: "admin@admin.com",
+    password: "rootroot"
+  }) {
+    token
+    lawyer {
+      lawyerId
+      name
+      roles
+      user {
+        userId
+        email
+      }
+      createAt
+      updateAt
+    }
   }
 }
