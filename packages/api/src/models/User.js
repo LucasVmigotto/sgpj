@@ -1,5 +1,6 @@
 const { gql } = require('apollo-server-express')
-const { cipher } = require('../utils')
+const { cipher, signJWT } = require('../utils')
+const { tokenGraphQLResolver } = require('../security')
 
 const typeDefs = gql`
   type User {
@@ -18,24 +19,31 @@ const typeDefs = gql`
     password: String!
   }
 
-  extend type Query {
-    login(input: UserInput!): Lawyer!
+  type LawyerAuth {
+    token: String!
+    lawyer: Lawyer
+  }
+
+  extend type Mutation {
+    authorization(token: String!): Lawyer
+    login(credentials: UserInput!): LawyerAuth!
   }
 `
 
 const resolvers = {
-  Query: {
-    async login (_, { input }, { knex }) {
-      const [res] = await knex('user')
+  Mutation: {
+    authorization: tokenGraphQLResolver,
+    async login (_, { credentials }, context) {
+      const [res] = await context.knex('user')
         .select('lawyer_id')
         .where({
-          ...input,
-          password: cipher(input.password)
+          ...credentials,
+          password: cipher(credentials.password)
         })
       if (!res) {
         throw new Error('Email or Password invalid')
       }
-      const [data] = await knex('lawyer')
+      const [data] = await context.knex('lawyer')
         .select(
           'lawyer_id',
           'name',
@@ -44,12 +52,17 @@ const resolvers = {
           'update_at'
         )
         .where({ 'lawyer.lawyer_id': res.lawyer_id })
-      return {
+      const lawyer = {
         lawyerId: data.lawyer_id,
         name: data.name,
         roles: data.roles,
         createAt: data.create_at,
         updateAt: data.update_at
+      }
+      context.lawyer = lawyer
+      return {
+        token: signJWT(lawyer),
+        lawyer
       }
     }
   }

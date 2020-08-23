@@ -2,6 +2,7 @@ const { gql } = require('apollo-server-express')
 const { camelizeKeys, decamelizeKeys } = require('humps')
 const { getLawSuits, promiseHandler } = require('../utils')
 const { getAppointments } = require('../utils')
+const { hasAuthorization } = require('../security')
 
 const typeDefs = gql`
   type Client {
@@ -29,7 +30,7 @@ const typeDefs = gql`
     lawyerId: ID!
   }
 
-  extend type Query {
+  extend type Viewer {
     client(clientId: ID!): Client!
     clients(limit: Int, offset: Int): ClientList!
   }
@@ -49,7 +50,7 @@ const resolvers = {
       return promiseHandler(getAppointments(knex, clientId, 'CLIENT'))
     }
   },
-  Query: {
+  Viewer: {
     async client (_, { clientId }, { knex }) {
       const [data] = await knex('client')
         .select(
@@ -103,7 +104,8 @@ const resolvers = {
     }
   },
   Mutation: {
-    async persistClient (_, { clientId, input }, { knex }) {
+    async persistClient (_, { clientId, input }, { knex, lawyer }) {
+      hasAuthorization(lawyer)
       let client = null
       if (clientId) {
         client = await knex('client')
@@ -120,7 +122,8 @@ const resolvers = {
       }
       return camelizeKeys(client[0])
     },
-    async deleteClient (_, { clientId }, { knex }) {
+    async deleteClient (_, { clientId }, { knex, lawyer }) {
+      hasAuthorization(lawyer)
       const data = await knex('client')
         .where({ client_id: clientId })
         .del()

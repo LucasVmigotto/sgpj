@@ -1,7 +1,8 @@
 const {
   expect,
   request,
-  handleResponseError
+  handleResponseError,
+  generateToken
 } = require('../utils')
 const config = require('../../src/config')
 const createApp = require('../../src/app')
@@ -9,6 +10,7 @@ const createApp = require('../../src/app')
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
 describe('Models:LawSuit', function () {
+  const token = generateToken(true)
   let knex, httpServer
   before(function () {
     const {
@@ -25,15 +27,17 @@ describe('Models:LawSuit', function () {
     let lawSuit = null
     it('lawSuits', async function () {
       const query = `
-        query {
-          lawSuits {
-            count
-            items {
-              lawSuitId
-              title
-              description
-              createAt
-              updateAt
+        query ($token: String!) {
+          viewer(token: $token) {
+            lawSuits {
+              count
+              items {
+                lawSuitId
+                title
+                description
+                createAt
+                updateAt
+              }
             }
           }
         }
@@ -41,12 +45,15 @@ describe('Models:LawSuit', function () {
       const {
         body: {
           data: {
-            lawSuits: { count, items }
+            viewer: { lawSuits: { count, items } }
           }
         }
       } = await request(httpServer)
         .post(config.ENDPOINT)
-        .send({ query })
+        .send({
+          query,
+          variables: { token }
+        })
         .then(handleResponseError)
       lawSuit = { ...items[0] }
       expect(count).to.be.not.null
@@ -56,41 +63,55 @@ describe('Models:LawSuit', function () {
     })
     it('lawSuit', async function () {
       const query = `
-        query ($lawSuitId: ID!) {
-          lawSuit (lawSuitId: $lawSuitId) {
-            lawSuitId
-            title
-            description
-            createAt
-            updateAt
+        query ($token: String!, $lawSuitId: ID!) {
+          viewer(token: $token) {
+            lawSuit (lawSuitId: $lawSuitId) {
+              lawSuitId
+              title
+              description
+              appointments {
+                appointmentId
+                title
+                description
+                eventDate
+                createAt
+                updateAt
+              }
+              createAt
+              updateAt
+            }
           }
         }
       `
       const {
         body: {
-          data: { lawSuit: item }
+          data: { viewer: { lawSuit: item } }
         }
       } = await request(httpServer)
         .post(config.ENDPOINT)
         .send({
           query,
-          variables: { lawSuitId: lawSuit.lawSuitId }
+          variables: {
+            token,
+            lawSuitId: lawSuit.lawSuitId
+          }
         })
         .then(handleResponseError)
       expect(item).to.be.not.null
       expect(item).to.have.property('lawSuitId')
       expect(item).to.have.property('title')
       expect(item).to.have.property('description')
+      expect(item).to.have.property('appointments')
       expect(item).to.have.property('createAt')
       expect(item).to.have.property('updateAt')
-      expect(item).to.be.deep.equal(lawSuit)
     })
   })
   describe('Mutations', function () {
     let lawSuit = null
     const body = {
       query: `
-        mutation ($input: LawSuitInput!) {
+        mutation ($token: String!, $input: LawSuitInput!) {
+          authorization(token: $token) { lawyerId }
           persistLawSuit(input: $input) {
             lawSuitId
             title
@@ -101,6 +122,7 @@ describe('Models:LawSuit', function () {
         }
       `,
       variables: {
+        token,
         input: {
           title: 'Law Suit Title',
           description: 'Law Suit Description',
@@ -128,7 +150,8 @@ describe('Models:LawSuit', function () {
     it('persistLawSuit (update)', async function () {
       const body = {
         query: `
-          mutation ($lawSuitId: ID, $input: LawSuitInput!) {
+          mutation ($token: String!, $lawSuitId: ID, $input: LawSuitInput!) {
+            authorization(token: $token) { lawyerId }
             persistLawSuit(lawSuitId: $lawSuitId, input: $input) {
               lawSuitId
               title
@@ -139,6 +162,7 @@ describe('Models:LawSuit', function () {
           }
         `,
         variables: {
+          token,
           lawSuitId: lawSuit.lawSuitId,
           input: {
             title: 'Law Suit Title CHANGED',
@@ -163,7 +187,8 @@ describe('Models:LawSuit', function () {
     })
     it('deleteLawSuit', async function () {
       const query = `
-        mutation ($lawSuitId: ID!) {
+        mutation ($token: String!, $lawSuitId: ID!) {
+          authorization(token: $token) { lawyerId }
           deleteLawSuit(lawSuitId: $lawSuitId)
         }
       `
@@ -175,7 +200,10 @@ describe('Models:LawSuit', function () {
         .post(config.ENDPOINT)
         .send({
           query,
-          variables: { lawSuitId: lawSuit.lawSuitId }
+          variables: {
+            token,
+            lawSuitId: lawSuit.lawSuitId
+          }
         })
         .then(handleResponseError)
       expect(deleteLawSuit).to.be.not.null

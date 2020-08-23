@@ -1,6 +1,8 @@
 const config = require('../config')
 const crypto = require('crypto')
 const { camelizeKeys } = require('humps')
+const { sign } = require('jsonwebtoken')
+const { JWT_EXP } = require('../config')
 
 const cipher = password => {
   const cipher = crypto.createCipheriv(
@@ -63,15 +65,31 @@ const defineType = (identifier, id) => {
   if (identifier === 'LAWSUIT') {
     return { law_suit_id: id }
   }
-  throw new Error('Unvalid option selected')
+  throw new Error('Invalid option selected')
 }
 
 const promiseHandler = promise =>
   promise.then(res =>
     res.map(el => camelizeKeys(el)))
 
+const signJWT = (
+  data, key = config.JWT_SECRET, expiresIn = JWT_EXP
+) => sign(data, key, { expiresIn })
+
+const UserTypes = {
+  ADMIN: 'ADMIN',
+  LAWYER: 'LAWYER'
+}
+
+const userInRoles = (user, role = UserTypes.LAWYER) =>
+  user.roles.includes(role) || user.roles.includes(UserTypes.ADMIN)
+
 module.exports = {
   cipher,
+  signJWT,
+  UserTypes,
+  userInRoles,
+  defineType,
   promiseHandler,
   getClients,
   getLawSuits,

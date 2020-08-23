@@ -1,7 +1,8 @@
 const {
   expect,
   request,
-  handleResponseError
+  handleResponseError,
+  generateToken
 } = require('../utils')
 const config = require('../../src/config')
 const createApp = require('../../src/app')
@@ -9,6 +10,7 @@ const createApp = require('../../src/app')
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
 describe('Models:Client', function () {
+  const token = generateToken(true)
   let knex, httpServer
   before(function () {
     const {
@@ -25,10 +27,54 @@ describe('Models:Client', function () {
     let client = null
     it('clients', async function () {
       const query = `
-        query {
-          clients {
-            count
-            items {
+        query ($token: String!) {
+          viewer(token: $token) {
+            clients {
+              count
+              items {
+                clientId
+                name
+                cpf
+                email
+                phone
+                lawSuits {
+                  lawSuitId
+                  title
+                  description
+                  createAt
+                  updateAt
+                }
+                createAt
+                updateAt
+              }
+            }
+          }
+        }
+      `
+      const {
+        body: {
+          data: {
+            viewer: { clients: { count, items } }
+          }
+        }
+      } = await request(httpServer)
+        .post(config.ENDPOINT)
+        .send({
+          query,
+          variables: { token }
+        })
+        .then(handleResponseError)
+      client = { ...items[0] }
+      expect(count).to.be.not.null
+      expect(count).to.be.an('number')
+      expect(items).to.be.not.null
+      expect(items).to.be.an('array')
+    })
+    it('client', async function () {
+      const query = `
+        query ($token: String!, $clientId: ID!) {
+          viewer(token: $token) {
+            client (clientId: $clientId) {
               clientId
               name
               cpf
@@ -41,6 +87,14 @@ describe('Models:Client', function () {
                 createAt
                 updateAt
               }
+              appointments {
+                appointmentId
+                title
+                description
+                eventDate
+                createAt
+                updateAt
+              }
               createAt
               updateAt
             }
@@ -49,50 +103,16 @@ describe('Models:Client', function () {
       `
       const {
         body: {
-          data: {
-            clients: { count, items }
-          }
-        }
-      } = await request(httpServer)
-        .post(config.ENDPOINT)
-        .send({ query })
-        .then(handleResponseError)
-      client = { ...items[0] }
-      expect(count).to.be.not.null
-      expect(count).to.be.an('number')
-      expect(items).to.be.not.null
-      expect(items).to.be.an('array')
-    })
-    it('client', async function () {
-      const query = `
-        query ($clientId: ID!) {
-          client (clientId: $clientId) {
-            clientId
-            name
-            cpf
-            email
-            phone
-            lawSuits {
-              lawSuitId
-              title
-              description
-              createAt
-              updateAt
-            }
-            createAt
-            updateAt
-          }
-        }
-      `
-      const {
-        body: {
-          data: { client: item }
+          data: { viewer: { client: item } }
         }
       } = await request(httpServer)
         .post(config.ENDPOINT)
         .send({
           query,
-          variables: { clientId: client.clientId }
+          variables: {
+            token,
+            clientId: client.clientId
+          }
         })
         .then(handleResponseError)
       expect(item).to.be.not.null
@@ -103,16 +123,18 @@ describe('Models:Client', function () {
       expect(item).to.have.property('phone')
       expect(item).to.have.property('lawSuits')
       expect(item.lawSuits).to.be.an('array')
+      expect(item).to.have.property('appointments')
+      expect(item.appointments).to.be.an('array')
       expect(item).to.have.property('createAt')
       expect(item).to.have.property('updateAt')
-      expect(item).to.be.deep.equal(client)
     })
   })
   describe('Mutations', function () {
     let client = null
     const body = {
       query: `
-        mutation ($input: ClientInput!) {
+        mutation ($token: String!, $input: ClientInput!) {
+          authorization(token: $token) { lawyerId }
           persistClient(input: $input) {
             clientId
             name
@@ -125,6 +147,7 @@ describe('Models:Client', function () {
         }
       `,
       variables: {
+        token,
         input: {
           name: 'John Doe 2',
           cpf: '85743928583',
@@ -153,21 +176,11 @@ describe('Models:Client', function () {
       expect(client).to.have.property('createAt')
       expect(client).to.have.property('updateAt')
     })
-    /*
-    it('persistClient (error - duplicate entry)', async function () {
-      const res = await request(httpServer)
-        .post(config.ENDPOINT)
-        .send(body)
-      const err = res.body.errors[0]
-      expect(err).to.be.not.null
-      expect(err).to.be.an('object')
-      expect(err.message).to.match(/duplicate key value/)
-    })
-    */
     it('persistClient (update)', async function () {
       const body = {
         query: `
-          mutation ($clientId: ID, $input: ClientInput!) {
+          mutation ($token: String!, $clientId: ID, $input: ClientInput!) {
+            authorization(token: $token) { lawyerId }
             persistClient(clientId: $clientId, input: $input) {
               clientId
               name
@@ -180,6 +193,7 @@ describe('Models:Client', function () {
           }
         `,
         variables: {
+          token,
           clientId: client.clientId,
           input: {
             name: 'John Doe 2 CHANGED',
@@ -206,7 +220,8 @@ describe('Models:Client', function () {
     })
     it('deleteClient', async function () {
       const query = `
-        mutation ($clientId: ID!) {
+        mutation ($token: String!, $clientId: ID!) {
+          authorization(token: $token) { lawyerId }
           deleteClient(clientId: $clientId)
         }
       `
@@ -218,7 +233,10 @@ describe('Models:Client', function () {
         .post(config.ENDPOINT)
         .send({
           query,
-          variables: { clientId: client.clientId }
+          variables: {
+            token,
+            clientId: client.clientId
+          }
         })
         .then(handleResponseError)
       expect(deleteClient).to.be.not.null

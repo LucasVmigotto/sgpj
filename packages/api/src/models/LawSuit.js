@@ -1,6 +1,7 @@
 const { gql } = require('apollo-server-express')
 const { camelizeKeys, decamelizeKeys } = require('humps')
 const { getAppointments, promiseHandler } = require('../utils')
+const { hasAuthorization } = require('../security')
 
 const typeDefs = gql`
   type LawSuit {
@@ -23,7 +24,7 @@ const typeDefs = gql`
     clientId: ID!
   }
 
-  extend type Query {
+  extend type Viewer {
     lawSuit(lawSuitId: ID!): LawSuit!
     lawSuits(limit: Int, offset: Int): LawSuitList!
   }
@@ -40,7 +41,7 @@ const resolvers = {
       return promiseHandler(getAppointments(knex, lawSuitId, 'LAWSUIT'))
     }
   },
-  Query: {
+  Viewer: {
     async lawSuit (_, { lawSuitId }, { knex }) {
       const [data] = await knex('law_suit')
         .select(
@@ -86,7 +87,8 @@ const resolvers = {
     }
   },
   Mutation: {
-    async persistLawSuit (_, { lawSuitId, input }, { knex }) {
+    async persistLawSuit (_, { lawSuitId, input }, { knex, lawyer }) {
+      hasAuthorization(lawyer)
       let lawSuit = null
       if (lawSuitId) {
         lawSuit = await knex('law_suit')
@@ -103,7 +105,8 @@ const resolvers = {
       }
       return camelizeKeys(lawSuit[0])
     },
-    async deleteLawSuit (_, { lawSuitId }, { knex }) {
+    async deleteLawSuit (_, { lawSuitId }, { knex, lawyer }) {
+      hasAuthorization(lawyer)
       const data = await knex('law_suit')
         .where({ law_suit_id: lawSuitId })
         .del()

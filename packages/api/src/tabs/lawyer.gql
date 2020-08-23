@@ -1,11 +1,46 @@
-query Lawyers {
-  lawyers(limit: 10, offset: 0) {
-    count
-    items {
+query Lawyers ($lawyer: String!) {
+  viewer(token: $lawyer) {
+    lawyers(limit: 10, offset: 0) {
+      count
+      items {
+        lawyerId
+        name
+        roles
+        oab
+        user {
+          userId
+          email
+        }
+        createAt
+        updateAt
+      }
+    }
+  }
+}
+query Lawyer ($lawyer: String!) {
+  viewer(token: $lawyer) {
+    lawyer(lawyerId: 1) {
       lawyerId
       name
       roles
       oab
+      clients {
+        clientId
+        name
+        cpf
+        email
+        phone
+        createAt
+        updateAt
+      }
+      appointments {
+        appointmentId
+        title
+        description
+        eventDate
+        createAt
+        updateAt
+      }
       user {
         userId
         email
@@ -15,39 +50,11 @@ query Lawyers {
     }
   }
 }
-query Lawyer {
-  lawyer(lawyerId: 1) {
-    lawyerId
-    name
-    roles
-    oab
-    clients {
-      clientId
-      name
-      cpf
-      email
-      phone
-      createAt
-      updateAt
-    }
-    appointments {
-      appointmentId
-      title
-      description
-      eventDate
-      createAt
-      updateAt
-    }
-    user {
-      userId
-      email
-    }
-    createAt
-    updateAt
-  }
-}
 
-mutation CreateLawyer {
+mutation CreateLawyer ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
   persistLawyer(
     input: {
       name: "John Doe 2",
@@ -72,7 +79,10 @@ mutation CreateLawyer {
   }
 }
 
-mutation UpdateLawyer {
+mutation UpdateLawyer ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
   persistLawyer(
     lawyerId: 2,
     input: {
@@ -94,6 +104,9 @@ mutation UpdateLawyer {
   }
 }
 
-mutation DeleteLawyer {
+mutation DeleteLawyer ($admin: String!) {
+  authorization(token: $admin) {
+    lawyerId
+  }
   deleteLawyer(lawyerId: 2)
 }
