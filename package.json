@@ -10,7 +10,7 @@
     "postinstall": "lerna bootstrap",
     "build": "lerna run --stream build",
     "lint": "lerna run --stream lint",
-    "migrate": "lerna run --stream migrate",
+    "migrate": "lerna run --stream migrate:latest",
     "test": "lerna run --stream test"
   },
   "dependencies": {
