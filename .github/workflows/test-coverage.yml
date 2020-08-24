@@ -5,15 +5,11 @@ on:
     branches:
       - master
       - dev
-  pull_request:
-    branches:
-      - master
-      - dev
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: Test Code
+    name: Test Code (with coverage)
     services:
       postgres:
         image: postgres:11
@@ -48,6 +44,11 @@ jobs:
           PG_CONNECTION_STRING: ${{ secrets.PG_CONNECTION_STRING }}
         run: yarn run migrate
       - name: Test
+        uses: paambaati/codeclimate-action@v2.6.0
         env:
           PG_CONNECTION_STRING: ${{ secrets.PG_CONNECTION_STRING }}
-        run: yarn test
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: yarn test:coverage
+          coverageLocations: |
+            ${{github.workspace}}/packages/api/coverage/lcov.info:lcov

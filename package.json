@@ -11,7 +11,8 @@
     "build": "lerna run --stream build",
     "lint": "lerna run --stream lint",
     "migrate": "lerna run --stream migrate:latest",
-    "test": "lerna run --stream test"
+    "test": "lerna run --stream test",
+    "test:coverage": "lerna run --stream test:coverage"
   },
   "dependencies": {
     "lerna": "^3.20.2"

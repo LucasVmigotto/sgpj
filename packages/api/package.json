@@ -18,8 +18,8 @@
     "migrate:make": "knex migrate:make",
     "migrate:latest": "knex migrate:latest",
     "migrate:rollback": "knex migrate:rollback --all",
-    "test": "NODE_ENV=test nyc --reporter=html --reporter=text-summary mocha 'test/**/*.test.js'",
-    "test:fast": "NODE_ENV=test mocha 'test/**/*.test.js'",
+    "test": "NODE_ENV=test mocha 'test/**/*.test.js'",
+    "test:coverage": "rm -rf ./node_modules/.cache && rm -rf .nyc_output && rm -rf coverage/ && NODE_ENV=test nyc --reporter=text-summary --reporter=lcov mocha 'test/**/*.test.js'",
     "test:watch": "NODE_ENV=test mocha --watch",
     "lint": "standard"
   },
