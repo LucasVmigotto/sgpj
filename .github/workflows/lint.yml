@@ -16,6 +16,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.8.0'
       - name: Docker Image
         uses: LucasVmigotto/sgpj/docker@dev
       - name: Install dependencies
