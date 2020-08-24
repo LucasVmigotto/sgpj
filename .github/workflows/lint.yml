@@ -1,0 +1,35 @@
+name: SGPJ Lint CI
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - master
+      - dev
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Code lint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.8.0'
+      - name: Docker Image
+        uses: LucasVmigotto/sgpj/docker@dev
+      - name: Install dependencies
+        run: yarn
+      - name: Cache modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.yarn
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Lint
+        run: yarn run lint
