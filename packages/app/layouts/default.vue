@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app>
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -24,7 +24,6 @@
         </v-list-item>
       </v-list>
       <v-footer
-        :absolute="!fixed"
         app
       >
         <span
