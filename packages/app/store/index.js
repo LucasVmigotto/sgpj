@@ -1,5 +1,17 @@
+import * as appointment from './modules/appointment'
+import * as client from './modules/client'
+import * as lawsuit from './modules/lawsuit'
+import * as lawyer from './modules/lawyer'
+import * as user from './modules/user'
+
 const store = {
-  modules: {},
+  modules: {
+    appointment,
+    client,
+    lawsuit,
+    lawyer,
+    user
+  },
   state: () => ({
     loading: false,
     error: null,

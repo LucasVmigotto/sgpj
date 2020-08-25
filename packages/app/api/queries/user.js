@@ -12,7 +12,7 @@ const MUTATION_USER_LOGIN = `
   }
 `
 
-export async function login ({ login }) {
-  const { login } = await gql(MUTATION_USER_LOGIN, { login })
+export async function login ({ login: { username, password } }) {
+  const { login } = await gql(MUTATION_USER_LOGIN, { login: { username, password } })
   return login
 }
