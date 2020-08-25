@@ -5,7 +5,7 @@
       <v-card-text>
         <v-form ref="form">
           <v-text-field
-            v-model="username"
+            v-model="email"
             :rules="[ rules.required, rules.validMail ]"
             label="E-mail"
             hint="username@email.com"
@@ -45,12 +45,12 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   layout: 'login',
   data: () => ({
-    username: '',
+    email: '',
     password: '',
     showPassword: false,
     rules: {
       required: value => !!value || 'Campo obrigatório',
-      validMail: value => value
+      validMail: value => !!value
         .match(/^[\w\d]+@[\w\d]+(\.\w+)+$/g) || 'O E-mail inserido é inválido'
     }
   }),
@@ -58,8 +58,8 @@ export default {
     ...mapGetters(['loading']),
     invalidForm () {
       return (
-        !this.username ||
-        !this.username.match(/^[\w\d]+@[\w\d]+(\.\w+)+$/g) ||
+        !this.email ||
+        !this.email.match(/^[\w\d]+@[\w\d]+(\.\w+)+$/g) ||
         !this.password ||
         this.password.length < 7
       )
@@ -68,7 +68,16 @@ export default {
   methods: {
     ...mapActions('user', ['login']),
     subbmitLogin () {
-      this.$router.push({ name: 'index' })
+      this.login({
+        login: {
+          email: this.email,
+          password: this.password
+        }
+      }).then((res) => {
+        this.$router.push({ name: 'index' })
+      }).catch((err) => {
+        console.log(err)
+      })
     }
   }
 }
