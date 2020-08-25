@@ -1,8 +1,8 @@
-import * as appointment from './modules/appointment'
-import * as client from './modules/client'
-import * as lawsuit from './modules/lawsuit'
-import * as lawyer from './modules/lawyer'
-import * as user from './modules/user'
+import appointment from './appointment'
+import client from './client'
+import lawsuit from './lawsuit'
+import lawyer from './lawyer'
+import user from './user'
 
 const store = {
   modules: {
