@@ -48,6 +48,7 @@ const resolvers = {
           'lawyer_id',
           'name',
           'roles',
+          'oab',
           'create_at',
           'update_at'
         )
@@ -56,6 +57,7 @@ const resolvers = {
         lawyerId: data.lawyer_id,
         name: data.name,
         roles: data.roles,
+        oab: data.oab,
         createAt: data.create_at,
         updateAt: data.update_at
       }
