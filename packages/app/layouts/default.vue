@@ -8,6 +8,20 @@
       app
     >
       <v-list>
+        <v-list-item>
+          <v-list-item-action>
+            <v-avatar
+              color="primary"
+              :size="miniVariant ? 36 : 48"
+            >
+              <span>{{ avatarInitials() }}</span>
+            </v-avatar>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>{{ userLoggedIn.name }}</v-list-item-title>
+            <v-list-item-subtitle>OAB: {{ userLoggedIn.oab }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
         <v-list-item
           v-for="(item, i) in items"
           :key="i"
@@ -56,6 +70,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data () {
     return {
@@ -69,6 +85,19 @@ export default {
           to: '/'
         }
       ]
+    }
+  },
+  computed: {
+    ...mapGetters('user', [
+      'userLoggedIn'
+    ])
+  },
+  methods: {
+    avatarInitials () {
+      const words = this.userLoggedIn.name.split(' ')
+      const firstLetter = words[0].charAt(0)
+      const lastLetter = words[words.length - 1].charAt(0)
+      return `${firstLetter}${lastLetter}`
     }
   }
 }

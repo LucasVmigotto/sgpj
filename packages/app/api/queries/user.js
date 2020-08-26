@@ -7,6 +7,8 @@ const MUTATION_USER_LOGIN = `
       lawyer {
         lawyerId
         name
+        roles
+        oab
       }
     }
   }
