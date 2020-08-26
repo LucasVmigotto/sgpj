@@ -82,7 +82,12 @@ export default {
         {
           icon: 'mdi-apps',
           title: 'Dashboard',
-          to: '/'
+          to: '/dashboard'
+        },
+        {
+          icon: 'mdi-account-multiple',
+          title: 'Advogados',
+          to: '/lawyers'
         }
       ]
     }
