@@ -27,13 +27,13 @@ const lawyer = {
     async listLawyers ({ state, commit, dispatch }, token) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const { count, item } = await lawyerAPI.listLawyers({
+        const { count, items } = await lawyerAPI.listLawyers({
           token,
           limit: state.limit,
           offset: state.offset
         })
-        commit('LAWYERS_CHANGES', item)
-        commit('COUNT_CHANGES', count)
+        commit('LAWYERS_CHANGED', items)
+        commit('COUNT_CHANGED', count)
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
         dispatch('setError', err, { root: true })
@@ -41,7 +41,7 @@ const lawyer = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async getLawyers ({ commit, dispatch }, { token, lawyerId }) {
+    async getLawyer ({ commit, dispatch }, { token, lawyerId }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         const lawyer = await lawyerAPI.getLawyer({ token, lawyerId })

@@ -27,13 +27,13 @@ const lawsuit = {
     async listLawSuits ({ state, commit, dispatch }, token) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const { count, item } = await lawSuitAPI.listLawSuits({
+        const { count, items } = await lawSuitAPI.listLawSuits({
           token,
           limit: state.limit,
           offset: state.offset
         })
-        commit('LAWSUITS_CHANGES', item)
-        commit('COUNT_CHANGES', count)
+        commit('LAWSUITS_CHANGED', items)
+        commit('COUNT_CHANGED', count)
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
         dispatch('setError', err, { root: true })

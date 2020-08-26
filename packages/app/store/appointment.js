@@ -27,13 +27,13 @@ const appointment = {
     async listAppointments ({ state, commit, dispatch }, token) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const { count, item } = await appointmentAPI.listAppointments({
+        const { count, items } = await appointmentAPI.listAppointments({
           token,
           limit: state.limit,
           offset: state.offset
         })
-        commit('APPOINTMENTS_CHANGES', item)
-        commit('COUNT_CHANGES', count)
+        commit('APPOINTMENTS_CHANGED', items)
+        commit('COUNT_CHANGED', count)
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
         dispatch('setError', err, { root: true })

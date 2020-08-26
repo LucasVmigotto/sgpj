@@ -27,13 +27,13 @@ const client = {
     async listClients ({ state, commit, dispatch }, token) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const { count, item } = await clientAPI.listClients({
+        const { count, items } = await clientAPI.listClients({
           token,
           limit: state.limit,
           offset: state.offset
         })
-        commit('CLIENTS_CHANGES', item)
-        commit('COUNT_CHANGES', count)
+        commit('CLIENTS_CHANGED', items)
+        commit('COUNT_CHANGED', count)
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
         dispatch('setError', err, { root: true })
