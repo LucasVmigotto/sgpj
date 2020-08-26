@@ -1,38 +1,38 @@
-import * as appointmentAPI from '../../api/queries/appointment'
+import * as lawSuitAPI from '../api/queries/lawsuit'
 
-const appointment = {
+const lawsuit = {
   namespaced: true,
   state: () => ({
-    appointments: [],
-    appointment: null,
+    lawSuits: [],
+    lawSuit: null,
     limit: 100,
     offset: 0,
     count: 0
   }),
   getters: {
-    appointments (state) { return state.appointments },
-    appointment (state) { return state.appointment },
+    lawSuits (state) { return state.lawSuits },
+    lawSuit (state) { return state.lawSuit },
     limit (state) { return state.limit },
     offset (state) { return state.offset },
     count (state) { return state.count }
   },
   mutations: {
-    APPOINTMENTS_CHANGED (state, appointments) { state.appointments = appointments },
-    APPOINTMENT_CHANGED (state, appointment) { state.appointment = appointment },
+    LAWSUITS_CHANGED (state, lawSuits) { state.lawSuits = lawSuits },
+    LAWSUIT_CHANGED (state, lawSuit) { state.lawSuit = lawSuit },
     LIMIT_CHANGED (state, limit) { state.limit = limit },
     OFFSET_CHANGED (state, offset) { state.offset = offset },
     COUNT_CHANGED (state, count) { state.count = count }
   },
   actions: {
-    async listAppointments ({ state, commit, dispatch }, token) {
+    async listLawSuits ({ state, commit, dispatch }, token) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const { count, item } = await appointmentAPI.listAppointments({
+        const { count, item } = await lawSuitAPI.listLawSuits({
           token,
           limit: state.limit,
           offset: state.offset
         })
-        commit('APPOINTMENTS_CHANGES', item)
+        commit('LAWSUITS_CHANGES', item)
         commit('COUNT_CHANGES', count)
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
@@ -41,11 +41,11 @@ const appointment = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async getAppointment ({ commit, dispatch }, { token, appointmentId }) {
+    async getLawSuit ({ commit, dispatch }, { token, lawSuitId }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const appointment = await appointmentAPI.getAppointment({ token, appointmentId })
-        commit('APPOINTMENT_CHANGED', appointment)
+        const lawSuit = await lawSuitAPI.getLawSuit({ token, lawSuitId })
+        commit('LAWSUIT_CHANGED', lawSuit)
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
         dispatch('setError', err, { root: true })
@@ -53,14 +53,14 @@ const appointment = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async createClient ({ commit, dispatch }, { token, appointmentId, input }) {
+    async createLawSuit ({ commit, dispatch }, { token, lawSuitId, input }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         let data = null
-        if (appointmentId) {
-          data = await appointmentAPI.updateAppointment({ token, appointmentId, input })
+        if (lawSuitId) {
+          data = await lawSuitAPI.updateLawSuit({ token, lawSuitId, input })
         } else {
-          data = await appointmentAPI.createAppointment({ token, input })
+          data = await lawSuitAPI.createLawSuit({ token, input })
         }
         return data
       } catch (err) {
@@ -70,10 +70,10 @@ const appointment = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async deleteAppointment ({ commit, dispatch }, { token, appointmentId }) {
+    async deleteLawSuit ({ commit, dispatch }, { token, lawSuitId }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const success = await appointmentAPI.deleteAppointment({ token, appointmentId })
+        const success = await lawSuitAPI.deleteLawSuit({ token, lawSuitId })
         return success
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
@@ -85,4 +85,4 @@ const appointment = {
   }
 }
 
-export default appointment
+export default lawsuit

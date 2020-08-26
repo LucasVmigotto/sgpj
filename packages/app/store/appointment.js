@@ -1,38 +1,38 @@
-import * as clientAPI from '../../api/queries/client'
+import * as appointmentAPI from '../api/queries/appointment'
 
-const client = {
+const appointment = {
   namespaced: true,
   state: () => ({
-    clients: [],
-    client: null,
+    appointments: [],
+    appointment: null,
     limit: 100,
     offset: 0,
     count: 0
   }),
   getters: {
-    clients (state) { return state.clients },
-    client (state) { return state.client },
+    appointments (state) { return state.appointments },
+    appointment (state) { return state.appointment },
     limit (state) { return state.limit },
     offset (state) { return state.offset },
     count (state) { return state.count }
   },
   mutations: {
-    CLIENTS_CHANGED (state, clients) { state.clients = clients },
-    CLIENT_CHANGED (state, client) { state.client = client },
+    APPOINTMENTS_CHANGED (state, appointments) { state.appointments = appointments },
+    APPOINTMENT_CHANGED (state, appointment) { state.appointment = appointment },
     LIMIT_CHANGED (state, limit) { state.limit = limit },
     OFFSET_CHANGED (state, offset) { state.offset = offset },
     COUNT_CHANGED (state, count) { state.count = count }
   },
   actions: {
-    async listClients ({ state, commit, dispatch }, token) {
+    async listAppointments ({ state, commit, dispatch }, token) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const { count, item } = await clientAPI.listClients({
+        const { count, item } = await appointmentAPI.listAppointments({
           token,
           limit: state.limit,
           offset: state.offset
         })
-        commit('CLIENTS_CHANGES', item)
+        commit('APPOINTMENTS_CHANGES', item)
         commit('COUNT_CHANGES', count)
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
@@ -41,11 +41,11 @@ const client = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async getClient ({ commit, dispatch }, { token, clientId }) {
+    async getAppointment ({ commit, dispatch }, { token, appointmentId }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const client = await clientAPI.getClient({ token, clientId })
-        commit('CLIENT_CHANGED', client)
+        const appointment = await appointmentAPI.getAppointment({ token, appointmentId })
+        commit('APPOINTMENT_CHANGED', appointment)
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
         dispatch('setError', err, { root: true })
@@ -53,14 +53,14 @@ const client = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async createClient ({ commit, dispatch }, { token, clientId, input }) {
+    async createClient ({ commit, dispatch }, { token, appointmentId, input }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         let data = null
-        if (clientId) {
-          data = await clientAPI.updateClient({ token, clientId, input })
+        if (appointmentId) {
+          data = await appointmentAPI.updateAppointment({ token, appointmentId, input })
         } else {
-          data = await clientAPI.createClient({ token, input })
+          data = await appointmentAPI.createAppointment({ token, input })
         }
         return data
       } catch (err) {
@@ -70,10 +70,10 @@ const client = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async deleteClient ({ commit, dispatch }, { token, clientId }) {
+    async deleteAppointment ({ commit, dispatch }, { token, appointmentId }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const success = await clientAPI.deleteClient({ token, clientId })
+        const success = await appointmentAPI.deleteAppointment({ token, appointmentId })
         return success
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
@@ -85,4 +85,4 @@ const client = {
   }
 }
 
-export default client
+export default appointment

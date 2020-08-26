@@ -1,38 +1,38 @@
-import * as lawSuitAPI from '../../api/queries/lawsuit'
+import * as lawyerAPI from '../api/queries/lawyer'
 
-const lawsuit = {
+const lawyer = {
   namespaced: true,
   state: () => ({
-    lawSuits: [],
-    lawSuit: null,
+    lawyers: [],
+    lawyer: null,
     limit: 100,
     offset: 0,
     count: 0
   }),
   getters: {
-    lawSuits (state) { return state.lawSuits },
-    lawSuit (state) { return state.lawSuit },
+    lawyers (state) { return state.lawyers },
+    lawyer (state) { return state.lawyer },
     limit (state) { return state.limit },
     offset (state) { return state.offset },
     count (state) { return state.count }
   },
   mutations: {
-    LAWSUITS_CHANGED (state, lawSuits) { state.lawSuits = lawSuits },
-    LAWSUIT_CHANGED (state, lawSuit) { state.lawSuit = lawSuit },
+    LAWYERS_CHANGED (state, lawyers) { state.lawyers = lawyers },
+    LAWYER_CHANGED (state, lawyer) { state.lawyer = lawyer },
     LIMIT_CHANGED (state, limit) { state.limit = limit },
     OFFSET_CHANGED (state, offset) { state.offset = offset },
     COUNT_CHANGED (state, count) { state.count = count }
   },
   actions: {
-    async listLawSuits ({ state, commit, dispatch }, token) {
+    async listLawyers ({ state, commit, dispatch }, token) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const { count, item } = await lawSuitAPI.listLawSuits({
+        const { count, item } = await lawyerAPI.listLawyers({
           token,
           limit: state.limit,
           offset: state.offset
         })
-        commit('LAWSUITS_CHANGES', item)
+        commit('LAWYERS_CHANGES', item)
         commit('COUNT_CHANGES', count)
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
@@ -41,11 +41,11 @@ const lawsuit = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async getLawSuit ({ commit, dispatch }, { token, lawSuitId }) {
+    async getLawyers ({ commit, dispatch }, { token, lawyerId }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const lawSuit = await lawSuitAPI.getLawSuit({ token, lawSuitId })
-        commit('LAWSUIT_CHANGED', lawSuit)
+        const lawyer = await lawyerAPI.getLawyer({ token, lawyerId })
+        commit('LAWYER_CHANGED', lawyer)
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
         dispatch('setError', err, { root: true })
@@ -53,14 +53,14 @@ const lawsuit = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async createLawSuit ({ commit, dispatch }, { token, lawSuitId, input }) {
+    async createLawyer ({ commit, dispatch }, { token, lawyerId, input }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         let data = null
-        if (lawSuitId) {
-          data = await lawSuitAPI.updateLawSuit({ token, lawSuitId, input })
+        if (lawyerId) {
+          data = await lawyerAPI.updateLawyer({ token, lawyerId, input })
         } else {
-          data = await lawSuitAPI.createLawSuit({ token, input })
+          data = await lawyerAPI.createLawyer({ token, input })
         }
         return data
       } catch (err) {
@@ -70,10 +70,10 @@ const lawsuit = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async deleteLawSuit ({ commit, dispatch }, { token, lawSuitId }) {
+    async deleteLawyer ({ commit, dispatch }, { token, lawyerId }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const success = await lawSuitAPI.deleteLawSuit({ token, lawSuitId })
+        const success = await lawyerAPI.deleteLawyer({ token, lawyerId })
         return success
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
@@ -85,4 +85,4 @@ const lawsuit = {
   }
 }
 
-export default lawsuit
+export default lawyer

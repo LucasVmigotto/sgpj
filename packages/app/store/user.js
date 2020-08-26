@@ -1,7 +1,7 @@
-import * as userAPI from '../../api/queries/user'
+import * as userAPI from '../api/queries/user'
 
 const user = {
-  namespaced: true,
+  namespaced: false,
   state: () => ({
     userLoggedIn: null,
     token: null
@@ -18,7 +18,7 @@ const user = {
     async login ({ commit, dispatch }, login) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const { lawyer, token } = await userAPI.login({ login })
+        const { lawyer, token } = await userAPI.login(login)
         commit('USER_LOGGED_IN_CHANGED', lawyer)
         commit('TOKEN_CHANGED', token)
       } catch (err) {
