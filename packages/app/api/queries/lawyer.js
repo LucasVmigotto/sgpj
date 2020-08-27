@@ -51,7 +51,7 @@ const QUERY_GET_LAWYER = token => `
 
 const MUTATION_CREATE_LAWYER = token => `
   mutation ($input: LawyerInput!) {
-    authorization(token: "${token}")
+    authorization(token: "${token}") { lawyerId }
     persistLawyer(input: $input) {
       lawyerId
       name
@@ -61,7 +61,7 @@ const MUTATION_CREATE_LAWYER = token => `
 
 const MUTATION_UPDATE_LAWYER = token => `
   mutation ($lawyerId: ID, $input: LawyerInput!) {
-    authorization(token: "${token}")
+    authorization(token: "${token}") { lawyerId }
     persistLawyer(lawyerId: $lawyerId, input: $input) {
       lawyerId
       name
@@ -73,7 +73,7 @@ const MUTATION_UPDATE_LAWYER = token => `
 
 const MUTATION_DELETE_LAWYER = token => `
   mutation ($lawyerId: ID!) {
-    authorization(token: "${token}")
+    authorization(token: "${token}") { lawyerId }
     deleteLawyer(lawyerId: $lawyerId)
   }
 `
