@@ -27,6 +27,7 @@
                     <v-icon
                       v-if="userInRoles(userLoggedIn, ['ADMIN'])"
                       color="red"
+                      @click="openDel(el.lawyerId)"
                     >
                       mdi-delete
                     </v-icon>
@@ -64,6 +65,12 @@
       @close="dialog = !dialog"
       @save="save"
     />
+    <confirm-action
+      :visible="confirmDialogVisible"
+      :loading="loading"
+      @confirm="confirmDel"
+      @cancel="cancelDel"
+    />
   </v-layout>
 </template>
 
@@ -71,16 +78,25 @@
 import { mapGetters, mapActions } from 'vuex'
 import { userInRoles } from '../utils'
 import LawyerDialog from '../components/LawyerDialog'
+import ConfirmAction from '../components/ConfirmAction'
 
 export default {
-  components: { LawyerDialog },
+  components: {
+    LawyerDialog,
+    ConfirmAction
+  },
   data () {
     return {
       dialog: false,
-      currentPage: 1
+      currentPage: 1,
+      lawyerSelect: null,
+      confirmDialogVisible: false
     }
   },
   computed: {
+    ...mapGetters([
+      'loading'
+    ]),
     ...mapGetters('user', [
       'userLoggedIn',
       'token'
@@ -116,6 +132,7 @@ export default {
     ...mapActions('lawyer', [
       'listLawyers',
       'createLawyer',
+      'deleteLawyer',
       'jumpPage',
       'changePage'
     ]),
@@ -128,6 +145,21 @@ export default {
       await this.createLawyer({
         token: this.token, input
       })
+    },
+    openDel (lawyerId) {
+      this.lawyerSelect = lawyerId
+      this.confirmDialogVisible = true
+    },
+    confirmDel () {
+      this.deleteLawyer(this.lawyerSelect)
+        .then((res) => {
+          this.lawyerSelect = null
+          this.confirmDialogVisible = false
+        })
+    },
+    cancelDel () {
+      this.lawyerSelect = null
+      this.confirmDialogVisible = false
     }
   }
 }
