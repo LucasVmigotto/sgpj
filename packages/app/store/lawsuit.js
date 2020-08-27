@@ -7,30 +7,35 @@ const lawsuit = {
     lawSuit: null,
     limit: 100,
     offset: 0,
-    count: 0
+    count: 0,
+    page: 0,
+    pageLength: 0
   }),
   getters: {
     lawSuits (state) { return state.lawSuits },
     lawSuit (state) { return state.lawSuit },
     limit (state) { return state.limit },
     offset (state) { return state.offset },
-    count (state) { return state.count }
+    count (state) { return state.count },
+    page (state) { return state.page + 1 },
+    pageLength (state) { return Math.ceil(state.count / state.limit) }
   },
   mutations: {
     LAWSUITS_CHANGED (state, lawSuits) { state.lawSuits = lawSuits },
     LAWSUIT_CHANGED (state, lawSuit) { state.lawSuit = lawSuit },
     LIMIT_CHANGED (state, limit) { state.limit = limit },
     OFFSET_CHANGED (state, offset) { state.offset = offset },
-    COUNT_CHANGED (state, count) { state.count = count }
+    COUNT_CHANGED (state, count) { state.count = count },
+    PAGE_CHANGED (state, page) { state.page = page }
   },
   actions: {
-    async listLawSuits ({ state, commit, dispatch }, token) {
+    async listLawSuits ({
+      state, commit, dispatch, rootState: { user: { token } }
+    }, { limit = state.limit, offset = state.offset }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         const { count, items } = await lawSuitAPI.listLawSuits({
-          token,
-          limit: state.limit,
-          offset: state.offset
+          token, limit, offset
         })
         commit('LAWSUITS_CHANGED', items)
         commit('COUNT_CHANGED', count)
@@ -41,7 +46,9 @@ const lawsuit = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async getLawSuit ({ commit, dispatch }, { token, lawSuitId }) {
+    async getLawSuit ({
+      state, commit, dispatch, rootState: { user: { token } }
+    }, lawSuitId) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         const lawSuit = await lawSuitAPI.getLawSuit({ token, lawSuitId })
@@ -53,7 +60,9 @@ const lawsuit = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async createLawSuit ({ commit, dispatch }, { token, lawSuitId, input }) {
+    async createLawSuit ({
+      state, commit, dispatch, rootState: { user: { token } }
+    }, { lawSuitId, input }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         let data = null
@@ -62,6 +71,10 @@ const lawsuit = {
         } else {
           data = await lawSuitAPI.createLawSuit({ token, input })
         }
+        dispatch('listLawSuits', {
+          limit: state.limit,
+          offset: state.offset
+        })
         return data
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
@@ -70,10 +83,16 @@ const lawsuit = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async deleteLawSuit ({ commit, dispatch }, { token, lawSuitId }) {
+    async deleteLawSuit ({
+      state, commit, dispatch, rootState: { user: { token } }
+    }, { lawSuitId }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         const success = await lawSuitAPI.deleteLawSuit({ token, lawSuitId })
+        dispatch('listLawSuits', {
+          limit: state.limit,
+          offset: state.offset
+        })
         return success
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
@@ -81,6 +100,24 @@ const lawsuit = {
       } finally {
         commit('LOADING_CHANGED', false, { root: true })
       }
+    },
+    jumpPage ({ state, commit, dispatch }, page) {
+      const offset = state.limit * page - state.limit
+      dispatch('listLawSuits', {
+        limit: state.limit,
+        offset
+      })
+      commit('OFFSET_CHANGED', offset)
+    },
+    changePage ({ state, commit, dispatch }, next) {
+      const offset = next
+        ? state.offset + state.limit
+        : state.offset - state.limit
+      dispatch('listLawSuits', {
+        limit: state.limit,
+        offset
+      })
+      commit('OFFSET_CHANGED', offset)
     }
   }
 }

@@ -82,11 +82,15 @@ const lawyer = {
       }
     },
     async deleteLawyer ({
-      commit, dispatch, rootState: { user: { token } }
+      state, commit, dispatch, rootState: { user: { token } }
     }, lawyerId) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         const success = await lawyerAPI.deleteLawyer({ token, lawyerId })
+        dispatch('listLawyers', {
+          limit: state.limit,
+          offset: state.offset
+        })
         return success
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
