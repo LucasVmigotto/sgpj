@@ -51,7 +51,7 @@ export default {
     rules: {
       required: value => !!value || 'Campo obrigatório',
       validMail: value => !!value
-        .match(/^[\w\d]+@[\w\d]+(\.\w+)+$/g) || 'O E-mail inserido é inválido'
+        .match(/^[\w\d]+@[\w\d]+(\.\w+)+$/) || 'O E-mail inserido é inválido'
     }
   }),
   computed: {
@@ -59,7 +59,7 @@ export default {
     invalidForm () {
       return (
         !this.email ||
-        !this.email.match(/^[\w\d]+@[\w\d]+(\.\w+)+$/g) ||
+        !this.email.match(/^[\w\d]+@[\w\d]+(\.\w+)+$/) ||
         !this.password ||
         this.password.length < 7
       )

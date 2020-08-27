@@ -3,20 +3,21 @@
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
-      :clipped="false"
+      expand-on-hover
+      :clipped="true"
       fixed
       app
     >
       <v-list>
         <v-list-item>
-          <v-list-item-action>
+          <v-list-item-avatar>
             <v-avatar
               color="primary"
               :size="miniVariant ? 36 : 48"
             >
               <span>{{ avatarInitials() }}</span>
             </v-avatar>
-          </v-list-item-action>
+          </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title>{{ userLoggedIn.name }}</v-list-item-title>
             <v-list-item-subtitle>OAB: {{ userLoggedIn.oab }}</v-list-item-subtitle>
@@ -37,28 +38,13 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <v-footer
-        app
-      >
-        <span
-          v-show="!miniVariant"
-        >
-          SGPJ &copy; {{ new Date().getFullYear() }}
-        </span>
-        <v-spacer />
-        <v-btn
-          icon
-          @click.stop="miniVariant = !miniVariant"
-        >
-          <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-        </v-btn>
-      </v-footer>
     </v-navigation-drawer>
     <v-app-bar
-      :clipped-left="false"
+      :clipped-left="true"
       fixed
       app
     >
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title v-text="title" />
     </v-app-bar>
     <v-main>
