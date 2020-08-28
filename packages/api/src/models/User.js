@@ -1,6 +1,7 @@
 const { gql } = require('apollo-server-express')
+const { camelizeKeys } = require('humps')
 const { cipher, signJWT } = require('../utils')
-const { tokenGraphQLResolver } = require('../security')
+const { tokenGraphQLResolver, hasAuthorization } = require('../security')
 
 const typeDefs = gql`
   type User {
@@ -27,6 +28,8 @@ const typeDefs = gql`
   extend type Mutation {
     authorization(token: String!): Lawyer
     login(credentials: UserInput!): LawyerAuth!
+    updateEmail(lawyerId: ID!, email: String!): User!
+    updatePassword(lawyerId: ID!, password: String!): Boolean!
   }
 `
 
@@ -66,7 +69,29 @@ const resolvers = {
         token: signJWT(lawyer),
         lawyer
       }
-    }
+    },
+    async updateEmail (_, { lawyerId, email }, { knex, lawyer }) {
+      hasAuthorization(lawyer)
+      const [exists] = await knex('user')
+        .select('email')
+        .where({ email })
+      if (exists) {
+        throw new Error('This email already has been taken')
+      }
+      const [data] = await knex('user')
+        .update({ email })
+        .where({ lawyer_id: lawyerId })
+        .returning(['user_id', 'email'])
+      return camelizeKeys(data)
+    },
+    async updatePassword (_, { lawyerId, password }, { knex, lawyer }) {
+      hasAuthorization(lawyer)
+      const [data] = await knex('user')
+        .update({ password: cipher(password) })
+        .where({ lawyer_id: lawyerId })
+        .returning(['user_id', 'email'])
+      return !!data
+    },
   }
 }
 
