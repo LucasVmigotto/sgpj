@@ -9,6 +9,20 @@ const MUTATION_USER_LOGIN = `
         name
         roles
         oab
+        user {
+          userId
+          email
+        }
+        clients {
+          clientId
+          name
+          phone
+        }
+        appointments {
+          appointmentId
+          title
+          eventDate
+        }
       }
     }
   }

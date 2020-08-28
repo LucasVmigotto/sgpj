@@ -16,7 +16,7 @@ const store = {
     loading: false,
     error: null,
     message: '',
-    type: '',
+    type: 'error',
     timeout: 3000,
     alertVisible: false
   }),
