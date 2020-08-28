@@ -86,6 +86,11 @@ export default {
           icon: 'mdi-account-multiple',
           title: 'Advogados',
           to: '/lawyers'
+        },
+        {
+          icon: 'mdi-account-cog',
+          title: 'Configuração de perfil',
+          to: '/editProfile'
         }
       ]
     }
