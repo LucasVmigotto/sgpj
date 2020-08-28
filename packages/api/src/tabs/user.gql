@@ -37,3 +37,20 @@ mutation Login {
     }
   }
 }
+
+mutation UpdateEmail ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  updateEmail(lawyerId: 2, email: "mailmail@mail.com") {
+    userId
+    email
+  }
+}
+
+mutation UpdatePassword ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  updatePassword(lawyerId: 2, password: "rootroot")
+}

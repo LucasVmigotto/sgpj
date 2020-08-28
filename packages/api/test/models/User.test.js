@@ -137,5 +137,76 @@ describe('Models:User', function () {
       expect(message).to.be.not.null
       expect(message).to.match(/invalid signature/)
     })
+    describe('updateEmail', () => {
+      const query = `
+        mutation ($token: String!, $lawyerId: ID!, $email: String!) {
+          authorization(token: $token) { lawyerId }
+          updateEmail(lawyerId: $lawyerId, email: $email) {
+            userId
+            email
+          }
+        }
+      `
+      const token = generateToken(true)
+      it('update', async function () {
+        const {
+          body: { data: { updateEmail } }
+        } = await request(httpServer)
+          .post(config.ENDPOINT)
+          .send({
+            query,
+            variables: {
+              token,
+              lawyerId: 1,
+              email: 'adminCHANGED@admin.com'
+            }
+          })
+          .then(handleResponseError)
+        expect(updateEmail).to.be.not.null
+        expect(updateEmail).to.be.haveOwnProperty('userId')
+        expect(updateEmail).to.be.haveOwnProperty('email')
+      })
+      it('rollback', async function () {
+        const {
+          body: { data: { updateEmail } }
+        } = await request(httpServer)
+          .post(config.ENDPOINT)
+          .send({
+            query,
+            variables: {
+              token,
+              lawyerId: 1,
+              email: 'admin@admin.com'
+            }
+          })
+          .then(handleResponseError)
+        expect(updateEmail).to.be.not.null
+        expect(updateEmail).to.be.haveOwnProperty('userId')
+        expect(updateEmail).to.be.haveOwnProperty('email')
+      })
+    })
+    it('updatePassword', async function () {
+      const body = {
+        query: `
+          mutation ($token: String!, $lawyerId: ID!, $password: String!) {
+            authorization(token: $token) { lawyerId }
+            updatePassword(lawyerId: $lawyerId, password: $password)
+          }
+        `,
+        variables: {
+          token: generateToken(true),
+          lawyerId: 1,
+          password: 'rootroot'
+        }
+      }
+      const {
+        body: { data: { updatePassword } }
+      } = await request(httpServer)
+        .post(config.ENDPOINT)
+        .send(body)
+        .then(handleResponseError)
+      expect(updatePassword).to.be.not.null
+      expect(updatePassword).to.be.true
+    })
   })
 })
