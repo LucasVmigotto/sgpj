@@ -100,7 +100,9 @@ const lawyer = {
       }
     },
     jumpPage ({ state, commit, dispatch }, page) {
-      const offset = state.limit * page - state.limit
+      const offset = page !== 1
+        ? (page * state.limit) - state.limit
+        : 0
       dispatch('listLawyers', {
         limit: state.limit,
         offset

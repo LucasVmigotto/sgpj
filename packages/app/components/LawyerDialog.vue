@@ -178,7 +178,12 @@ export default {
       this.confirmPassword = ''
     },
     save () {
-      this.$emit('save', { ...this.lawyer })
+      const add = {
+        ...this.lawyer,
+        user: { ...this.lawyer.user }
+      }
+      this.resetLawyer()
+      this.$emit('save', { ...add })
     },
     close () {
       this.$emit('close')

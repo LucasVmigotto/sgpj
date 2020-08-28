@@ -48,7 +48,19 @@
       <v-toolbar-title v-text="title" />
     </v-app-bar>
     <v-main>
-      <v-container>
+      <v-container fluid>
+        <v-alert
+          v-model="alertVisible"
+          :type="messageType"
+          transition="slide-x-transition"
+          elevation="9"
+          border="right"
+          class="front"
+          colored-border
+          absolute
+        >
+          {{ messageText }}
+        </v-alert>
         <nuxt />
       </v-container>
     </v-main>
@@ -79,6 +91,11 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'alertVisible',
+      'messageText',
+      'messageType'
+    ]),
     ...mapGetters('user', [
       'userLoggedIn'
     ])

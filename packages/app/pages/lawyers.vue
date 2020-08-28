@@ -95,7 +95,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'loading'
+      'loading',
+      'messageTimeout'
     ]),
     ...mapGetters('user', [
       'userLoggedIn',
@@ -129,6 +130,10 @@ export default {
     await this.listLawyers(this.token)
   },
   methods: {
+    ...mapActions([
+      'pushMessage',
+      'dismissMessage'
+    ]),
     ...mapActions('lawyer', [
       'listLawyers',
       'createLawyer',
@@ -140,11 +145,22 @@ export default {
     addLawyer () {
       this.dialog = true
     },
-    async save (input) {
+    save (input) {
       this.dialog = false
-      await this.createLawyer({
+      this.createLawyer({
         token: this.token, input
       })
+        .then((res) => {
+          if (res) {
+            this.pushMessage({
+              text: 'Advogado adicionado com sucesso',
+              type: 'success'
+            })
+            setTimeout(() => {
+              this.dismissMessage()
+            }, this.messageTimeout)
+          }
+        })
     },
     openDel (lawyerId) {
       this.lawyerSelect = lawyerId
@@ -155,6 +171,15 @@ export default {
         .then((res) => {
           this.lawyerSelect = null
           this.confirmDialogVisible = false
+          if (res) {
+            this.pushMessage({
+              text: 'Advogado removido com sucesso',
+              type: 'success'
+            })
+            setTimeout(() => {
+              this.dismissMessage()
+            }, this.messageTimeout)
+          }
         })
     },
     cancelDel () {

@@ -15,37 +15,30 @@ const store = {
   state: () => ({
     loading: false,
     error: null,
-    message: {},
-    messages: []
+    message: '',
+    type: '',
+    timeout: 3000,
+    alertVisible: false
   }),
   getters: {
     loading (state) { return state.loading },
     error (state) { return state.error },
-    message (state) {
-      return state.messages.length
-        ? state.messages[0]
-        : null
-    },
-    messageText (state) { return state.message.text || '' },
-    messageColor (state) { return state.message.color || 'default' },
-    messageTimeout (state) { return state.message.timeout || 0 }
+    messageText (state) { return state.message },
+    messageType (state) { return state.type },
+    messageTimeout (state) { return state.timeout },
+    alertVisible (state) { return state.alertVisible }
   },
   mutations: {
     LOADING_CHANGED (state, loading) { state.loading = loading },
     ERROR_CHANGED (state, error) { state.error = error },
-    PUSH_MESSAGE (state, { text, color, timeout }) {
-      state.messages.push({ text, color, timeout })
-      state.message = state.messages[0]
-    },
-    PULL_MESSAGE (state) {
-      state.messages.shift()
-      if (state.messages.length) {
-        state.message = state.messages[0]
-      }
+    PUSH_MESSAGE (state, { type, text, alertVisible }) {
+      state.message = text
+      state.type = type
+      state.alertVisible = alertVisible
     }
   },
   actions: {
-    setError ({ commit }, error) {
+    setError ({ state, commit }, error) {
       commit('ERROR_CHANGED', error)
       let { message } = error
       const graphQLErrors = (error.networkError && error.networkError.graphQLErrors) ||
@@ -55,16 +48,25 @@ const store = {
         message = graphQLError.message
       }
       commit('PUSH_MESSAGE', {
-        message,
-        timeout: 6000,
-        color: 'error'
+        text: message,
+        type: 'error',
+        alertVisible: true
+      })
+      setTimeout(() => {
+        commit('PUSH_MESSAGE', {
+          alertVisible: false
+        })
+      }, state.timeout)
+    },
+    pushMessage ({ commit }, { type, text }) {
+      commit('PUSH_MESSAGE', {
+        type, text, alertVisible: true
       })
     },
-    pushMessage ({ commit }, message) {
-      commit('PUSH_MESSAGE', message)
-    },
     dismissMessage ({ commit }) {
-      commit('PULL_MESSAGE')
+      commit('PUSH_MESSAGE', {
+        alertVisible: false
+      })
     }
   }
 }
