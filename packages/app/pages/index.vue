@@ -74,7 +74,7 @@ export default {
           password: this.password
         }
       }).then((res) => {
-        this.$router.push({ name: 'editProfile' })
+        this.$router.push({ name: 'dashboard' })
       }).catch((err) => {
         throw new Error(err)
       })

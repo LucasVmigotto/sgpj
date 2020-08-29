@@ -273,7 +273,40 @@ export default {
           this.editMode = false
         })
     },
-    updateUserPassword () {}
+    invalidPassword () {
+      if (!this.password || !this.confirmPassword) {
+        return 'O campo Senha não foi preenchido'
+      }
+      if (this.password.trim().length < 6 ||
+        this.confirmPassword.trim().length < 6) {
+        return 'A senha deve ter minímo de 6 caracteres'
+      }
+      if (!this.samePassword(this.password)) {
+        return 'As senhas não conferem'
+      }
+      return false
+    },
+    updateUserPassword () {
+      const invalid = this.invalidPassword()
+      if (invalid) {
+        this.pushMessage({
+          type: 'error',
+          text: invalid
+        })
+        return
+      }
+      this.updatePassword({
+        lawyerId: this.userLoggedIn.lawyerId,
+        password: this.password
+      })
+        .then((res) => {
+          this.pushMessage({
+            text: 'Senha atualizada com sucesso',
+            type: 'success'
+          })
+          this.editMode = false
+        })
+    }
   }
 }
 </script>

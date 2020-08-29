@@ -91,7 +91,7 @@ const resolvers = {
         .where({ lawyer_id: lawyerId })
         .returning(['user_id', 'email'])
       return !!data
-    },
+    }
   }
 }
 
