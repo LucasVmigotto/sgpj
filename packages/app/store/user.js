@@ -27,6 +27,34 @@ const user = {
       } finally {
         commit('LOADING_CHANGED', false, { root: true })
       }
+    },
+    async updateEmail ({ state, commit, dispatch }, { lawyerId, email }) {
+      commit('LOADING_CHANGED', true, { root: true })
+      try {
+        const data = await userAPI.updateEmail({
+          token: state.token, lawyerId, email
+        })
+        return data
+      } catch (err) {
+        commit('ERROR_CHANGED', err, { root: true })
+        dispatch('setError', err, { root: true })
+      } finally {
+        commit('LOADING_CHANGED', false, { root: true })
+      }
+    },
+    async updatePassword ({ state, commit, dispatch }, { lawyerId, password }) {
+      commit('LOADING_CHANGED', true, { root: true })
+      try {
+        const data = await userAPI.updatePassword({
+          token: state.token, lawyerId, password
+        })
+        return data
+      } catch (err) {
+        commit('ERROR_CHANGED', err, { root: true })
+        dispatch('setError', err, { root: true })
+      } finally {
+        commit('LOADING_CHANGED', false, { root: true })
+      }
     }
   }
 }

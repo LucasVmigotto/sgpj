@@ -7,33 +7,40 @@ const appointment = {
     appointment: null,
     limit: 100,
     offset: 0,
-    count: 0
+    count: 0,
+    page: 0,
+    pageLength: 0
   }),
   getters: {
     appointments (state) { return state.appointments },
     appointment (state) { return state.appointment },
     limit (state) { return state.limit },
     offset (state) { return state.offset },
-    count (state) { return state.count }
+    count (state) { return state.count },
+    page (state) { return state.page + 1 },
+    pageLength (state) { return Math.ceil(state.count / state.limit) }
   },
   mutations: {
     APPOINTMENTS_CHANGED (state, appointments) { state.appointments = appointments },
     APPOINTMENT_CHANGED (state, appointment) { state.appointment = appointment },
     LIMIT_CHANGED (state, limit) { state.limit = limit },
     OFFSET_CHANGED (state, offset) { state.offset = offset },
-    COUNT_CHANGED (state, count) { state.count = count }
+    COUNT_CHANGED (state, count) { state.count = count },
+    PAGE_CHANGED (state, page) { state.page = page }
   },
   actions: {
-    async listAppointments ({ state, commit, dispatch }, token) {
+    async listAppointments ({
+      state, commit, dispatch, rootState: { user: { token } }
+    }, { limit = state.limit, offset = state.offset }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const { count, item } = await appointmentAPI.listAppointments({
+        const { count, items } = await appointmentAPI.listAppointments({
           token,
           limit: state.limit,
           offset: state.offset
         })
-        commit('APPOINTMENTS_CHANGES', item)
-        commit('COUNT_CHANGES', count)
+        commit('APPOINTMENTS_CHANGED', items)
+        commit('COUNT_CHANGED', count)
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
         dispatch('setError', err, { root: true })
@@ -41,7 +48,9 @@ const appointment = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async getAppointment ({ commit, dispatch }, { token, appointmentId }) {
+    async getAppointment ({
+      commit, dispatch, rootState: { user: { token } }
+    }, appointmentId) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         const appointment = await appointmentAPI.getAppointment({ token, appointmentId })
@@ -53,7 +62,9 @@ const appointment = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async createClient ({ commit, dispatch }, { token, appointmentId, input }) {
+    async createClient ({
+      state, commit, dispatch, rootState: { user: { token } }
+    }, { appointmentId, input }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         let data = null
@@ -62,6 +73,10 @@ const appointment = {
         } else {
           data = await appointmentAPI.createAppointment({ token, input })
         }
+        dispatch('listAppointments', {
+          limit: state.limit,
+          offset: state.offset
+        })
         return data
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
@@ -70,10 +85,16 @@ const appointment = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async deleteAppointment ({ commit, dispatch }, { token, appointmentId }) {
+    async deleteAppointment ({
+      state, commit, dispatch, rootState: { user: { token } }
+    }, appointmentId) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         const success = await appointmentAPI.deleteAppointment({ token, appointmentId })
+        dispatch('listAppointments', {
+          limit: state.limit,
+          offset: state.offset
+        })
         return success
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })

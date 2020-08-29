@@ -2,7 +2,7 @@ import { gql } from '../gql'
 
 const QUERY_LIST_APPOINTMENT = token => `
   query ($limit: Int, $offset: Int) {
-    viewer(token: ${token}) {
+    viewer(token: "${token}") {
       appointments(limit: $limti, offset: $offset) {
         count
         items {
@@ -20,7 +20,7 @@ const QUERY_LIST_APPOINTMENT = token => `
 
 const QUERY_GET_APPOINTMENT = token => `
   query ($appointmentId: ID!) {
-    viewer(token: ${token}) {
+    viewer(token: "${token}") {
       appointment(appointmentId: $appointmentId) {
         appointmentId
         title
@@ -35,7 +35,7 @@ const QUERY_GET_APPOINTMENT = token => `
 
 const MUTATION_CREATE_APPOINTMENT = token => `
   mutation ($input: AppointmentInput!) {
-    authorization(token: ${token})
+    authorization(token: "${token}")
     persistAppointment(input: $input) {
       appointmentId
       title
@@ -47,7 +47,7 @@ const MUTATION_CREATE_APPOINTMENT = token => `
 
 const MUTATION_UPDATE_APPOINTMENT = token => `
   mutation ($appointmentId: ID, $input: AppointmentInput!) {
-    authorization(token: ${token})
+    authorization(token: "${token}")
     persistClient(appointmentId: $appointmentId, input: $input) {
       appointmentId
       title
@@ -61,7 +61,7 @@ const MUTATION_UPDATE_APPOINTMENT = token => `
 
 const MUTATION_DELETE_APPOINTMENT = token => `
   mutation ($appointmentId: ID!) {
-    authorization(token: ${token})
+    authorization(token: "${token}")
     deleteAppointment(appointmentId: $appointmentId)
   }
 `

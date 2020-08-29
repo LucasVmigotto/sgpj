@@ -2,8 +2,8 @@ import { gql } from '../gql'
 
 const QUERY_LIST_LAWYERS = token => `
   query ($limit: Int, $offset: Int) {
-    viewer(token: ${token}) {
-      lawyers(limit: $limti, offset: $offset) {
+    viewer(token: "${token}") {
+      lawyers(limit: $limit, offset: $offset) {
         count
         items {
           lawyerId
@@ -28,7 +28,7 @@ const QUERY_LIST_LAWYERS = token => `
 
 const QUERY_GET_LAWYER = token => `
   query ($lawyerId: ID!) {
-    viewer(token: ${token}) {
+    viewer(token: "${token}") {
       lawyer(lawyerId: $lawyerId) {
         lawyerId
         name
@@ -51,7 +51,7 @@ const QUERY_GET_LAWYER = token => `
 
 const MUTATION_CREATE_LAWYER = token => `
   mutation ($input: LawyerInput!) {
-    authorization(token: ${token})
+    authorization(token: "${token}") { lawyerId }
     persistLawyer(input: $input) {
       lawyerId
       name
@@ -61,7 +61,7 @@ const MUTATION_CREATE_LAWYER = token => `
 
 const MUTATION_UPDATE_LAWYER = token => `
   mutation ($lawyerId: ID, $input: LawyerInput!) {
-    authorization(token: ${token})
+    authorization(token: "${token}") { lawyerId }
     persistLawyer(lawyerId: $lawyerId, input: $input) {
       lawyerId
       name
@@ -73,7 +73,7 @@ const MUTATION_UPDATE_LAWYER = token => `
 
 const MUTATION_DELETE_LAWYER = token => `
   mutation ($lawyerId: ID!) {
-    authorization(token: ${token})
+    authorization(token: "${token}") { lawyerId }
     deleteLawyer(lawyerId: $lawyerId)
   }
 `

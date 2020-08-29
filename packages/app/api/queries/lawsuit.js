@@ -2,7 +2,7 @@ import { gql } from '../gql'
 
 const QUERY_LIST_LAWSUITS = token => `
   query ($limit: Int, $offset: Int) {
-    viewer(token: ${token}) {
+    viewer(token: "${token}") {
       lawSuits(limit: $limti, offset: $offset) {
         count
         items {
@@ -19,7 +19,7 @@ const QUERY_LIST_LAWSUITS = token => `
 
 const QUERY_GET_LAWSUIT = token => `
   query ($lawSuitId: ID!) {
-    viewer(token: ${token}) {
+    viewer(token: "${token}") {
       lawSuit(lawSuitId: $lawSuitId) {
         lawSuitId
         title
@@ -41,7 +41,7 @@ const QUERY_GET_LAWSUIT = token => `
 
 const MUTATION_CREATE_LAWSUIT = token => `
   mutation ($input: LawSuitInput!) {
-    authorization(token: ${token})
+    authorization(token: "${token}")
     persistLawSuit(input: $input) {
       lawSuitId
       title
@@ -52,7 +52,7 @@ const MUTATION_CREATE_LAWSUIT = token => `
 
 const MUTATION_UPDATE_LAWSUIT = token => `
   mutation ($lawSuitId: ID, $input: LawSuitInput!) {
-    authorization(token: ${token})
+    authorization(token: "${token}")
     persistLawSuit(lawSuitId: $lawSuitId, input: $input) {
       lawSuitId
       title
@@ -65,7 +65,7 @@ const MUTATION_UPDATE_LAWSUIT = token => `
 
 const MUTATION_DELETE_LAWSUIT = token => `
   mutation ($lawSuitId: ID!) {
-    authorization(token: ${token})
+    authorization(token: "${token}")
     deleteLawSuit(lawSuitId: $lawSuitId)
   }
 `
