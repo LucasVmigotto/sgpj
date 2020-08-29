@@ -35,7 +35,7 @@ const QUERY_GET_APPOINTMENT = token => `
 
 const MUTATION_CREATE_APPOINTMENT = token => `
   mutation ($input: AppointmentInput!) {
-    authorization(token: "${token}")
+    authorization(token: "${token}") { lawyerId }
     persistAppointment(input: $input) {
       appointmentId
       title
@@ -47,7 +47,7 @@ const MUTATION_CREATE_APPOINTMENT = token => `
 
 const MUTATION_UPDATE_APPOINTMENT = token => `
   mutation ($appointmentId: ID, $input: AppointmentInput!) {
-    authorization(token: "${token}")
+    authorization(token: "${token}") { lawyerId }
     persistClient(appointmentId: $appointmentId, input: $input) {
       appointmentId
       title
@@ -61,7 +61,7 @@ const MUTATION_UPDATE_APPOINTMENT = token => `
 
 const MUTATION_DELETE_APPOINTMENT = token => `
   mutation ($appointmentId: ID!) {
-    authorization(token: "${token}")
+    authorization(token: "${token}") { lawyerId }
     deleteAppointment(appointmentId: $appointmentId)
   }
 `

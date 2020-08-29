@@ -41,7 +41,7 @@ const QUERY_GET_LAWSUIT = token => `
 
 const MUTATION_CREATE_LAWSUIT = token => `
   mutation ($input: LawSuitInput!) {
-    authorization(token: "${token}")
+    authorization(token: "${token}") { lawyerId }
     persistLawSuit(input: $input) {
       lawSuitId
       title
@@ -52,7 +52,7 @@ const MUTATION_CREATE_LAWSUIT = token => `
 
 const MUTATION_UPDATE_LAWSUIT = token => `
   mutation ($lawSuitId: ID, $input: LawSuitInput!) {
-    authorization(token: "${token}")
+    authorization(token: "${token}") { lawyerId }
     persistLawSuit(lawSuitId: $lawSuitId, input: $input) {
       lawSuitId
       title
@@ -65,7 +65,7 @@ const MUTATION_UPDATE_LAWSUIT = token => `
 
 const MUTATION_DELETE_LAWSUIT = token => `
   mutation ($lawSuitId: ID!) {
-    authorization(token: "${token}")
+    authorization(token: "${token}") { lawyerId }
     deleteLawSuit(lawSuitId: $lawSuitId)
   }
 `
