@@ -5,7 +5,7 @@ const appointment = {
   state: () => ({
     appointments: [],
     appointment: null,
-    limit: 100,
+    limit: 5,
     offset: 0,
     count: 0,
     page: 0,
@@ -31,13 +31,11 @@ const appointment = {
   actions: {
     async listAppointments ({
       state, commit, dispatch, rootState: { user: { token } }
-    }, { limit = state.limit, offset = state.offset }) {
+    }, { limit = state.limit, offset = state.offset } = {}) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         const { count, items } = await appointmentAPI.listAppointments({
-          token,
-          limit: state.limit,
-          offset: state.offset
+          token, limit, offset
         })
         commit('APPOINTMENTS_CHANGED', items)
         commit('COUNT_CHANGED', count)
@@ -102,6 +100,26 @@ const appointment = {
       } finally {
         commit('LOADING_CHANGED', false, { root: true })
       }
+    },
+    jumpPage ({ state, commit, dispatch }, page) {
+      const offset = page !== 1
+        ? (page * state.limit) - state.limit
+        : 0
+      dispatch('listAppointments', {
+        limit: state.limit,
+        offset
+      })
+      commit('OFFSET_CHANGED', offset)
+    },
+    changePage ({ state, commit, dispatch }, next) {
+      const offset = next
+        ? state.offset + state.limit
+        : state.offset - state.limit
+      dispatch('listAppointments', {
+        limit: state.limit,
+        offset
+      })
+      commit('OFFSET_CHANGED', offset)
     }
   }
 }

@@ -5,7 +5,7 @@ const lawsuit = {
   state: () => ({
     lawSuits: [],
     lawSuit: null,
-    limit: 100,
+    limit: 5,
     offset: 0,
     count: 0,
     page: 0,
@@ -31,7 +31,7 @@ const lawsuit = {
   actions: {
     async listLawSuits ({
       state, commit, dispatch, rootState: { user: { token } }
-    }, { limit = state.limit, offset = state.offset }) {
+    }, { limit = state.limit, offset = state.offset } = {}) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         const { count, items } = await lawSuitAPI.listLawSuits({
@@ -47,7 +47,7 @@ const lawsuit = {
       }
     },
     async getLawSuit ({
-      state, commit, dispatch, rootState: { user: { token } }
+      commit, dispatch, rootState: { user: { token } }
     }, lawSuitId) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
@@ -102,7 +102,9 @@ const lawsuit = {
       }
     },
     jumpPage ({ state, commit, dispatch }, page) {
-      const offset = state.limit * page - state.limit
+      const offset = page !== 1
+        ? (page * state.limit) - state.limit
+        : 0
       dispatch('listLawSuits', {
         limit: state.limit,
         offset
