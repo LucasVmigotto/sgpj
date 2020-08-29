@@ -1,40 +1,38 @@
 <template>
-  <v-layout
-    column
-    justify-center
-    align-center
-  >
+  <v-layout>
     <v-container>
-      <span class="title">Advogados</span>
-      <v-row flex>
+      <span class="title">Clientes</span>
+      <v-row>
         <v-col cols="12">
           <v-data-table
-            :items="lawyers"
+            :items="clients"
             :headers="headers"
             hide-default-footer
           >
             <template v-slot:body="{ items }">
-              <tbody class="table-headers">
+              <tbody>
                 <tr
                   v-for="(el, index) in items"
                   :key="index"
                 >
                   <td>{{ el.name }}</td>
-                  <td>{{ el.oab }}</td>
+                  <td>{{ el.cpf }}</td>
+                  <td>{{ el.email }}</td>
+                  <td>{{ el.phone }}</td>
                   <td align="right">
                     <v-btn
                       small
                       icon
+                      @click="setClient(el.clientId)"
                     >
-                      <v-icon>
-                        mdi-information
+                      <v-icon color="primary">
+                        mdi-pencil
                       </v-icon>
                     </v-btn>
                     <v-btn
-                      v-if="userInRoles(userLoggedIn, ['ADMIN'])"
                       small
                       icon
-                      @click="openDel(el.lawyerId)"
+                      @click="openDel(el.clientId)"
                     >
                       <v-icon color="red">
                         mdi-delete
@@ -65,14 +63,15 @@
       fixed
       bottom
       right
-      @click="addLawyer"
+      @click="addClient"
     >
       <v-icon>mdi-plus</v-icon>
     </v-btn>
-    <lawyer-dialog
+    <client-dialog
+      v-model="clientEdit"
       :dialog="dialog"
-      @close="dialog = !dialog"
       @save="save"
+      @close="cancelAdd"
     />
     <confirm-action
       :visible="confirmDialogVisible"
@@ -84,18 +83,24 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import { userInRoles } from '../utils'
-import LawyerDialog from '../components/LawyerDialog'
+import { mapActions, mapGetters } from 'vuex'
+// import { cloneDeep } from 'lodash'
 import ConfirmAction from '../components/ConfirmAction'
+import ClientDialog from '../components/ClientDialog'
 
 export default {
   components: {
-    LawyerDialog,
-    ConfirmAction
+    ConfirmAction,
+    ClientDialog
   },
   data () {
     return {
+      clientEdit: {
+        name: '',
+        cpf: '',
+        email: '',
+        phone: ''
+      },
       dialog: false,
       currentPage: 1,
       lawyerSelect: null,
@@ -104,103 +109,126 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'loading',
-      'messageTimeout'
+      'loading'
     ]),
-    ...mapGetters('user', [
-      'userLoggedIn',
-      'token'
-    ]),
-    ...mapGetters('lawyer', [
-      'lawyers',
+    ...mapGetters('client', [
+      'clients',
+      'client',
       'pageLength'
     ]),
     headers: () => ([
       {
-        text: 'Nome',
-        align: 'left',
+        title: 'Nome',
         sortable: false,
         value: 'name'
       },
       {
-        text: 'OAB',
-        align: 'center',
+        title: 'CPF',
         sortable: false,
-        value: 'oab'
+        value: 'cpf'
       },
       {
-        text: 'Ações',
-        align: 'right',
+        title: 'E-mail',
+        sortable: false,
+        value: 'email'
+      },
+      {
+        title: 'Fone',
+        sortable: false,
+        value: 'phone'
+      },
+      {
+        title: 'Ações',
         sortable: false
       }
     ])
   },
   async created () {
-    await this.listLawyers()
+    await this.listClients()
   },
   methods: {
     ...mapActions([
       'pushMessage'
     ]),
-    ...mapActions('lawyer', [
-      'listLawyers',
-      'createLawyer',
-      'deleteLawyer',
+    ...mapActions('client', [
+      'listClients',
+      'getClient',
+      'resetClient',
+      'createClient',
+      'deleteClient',
       'jumpPage',
       'changePage'
     ]),
-    userInRoles,
-    addLawyer () {
+    setClient (clientId) {
+      this.getClient(clientId)
+        .then((res) => {
+          this.dialog = true
+        })
+    },
+    addClient () {
       this.dialog = true
     },
     save (input) {
       this.dialog = false
-      this.createLawyer({
-        input
-      })
-        .then((res) => {
-          if (res) {
-            this.pushMessage({
-              text: 'Advogado adicionado com sucesso',
-              type: 'success'
-            })
-          }
+      if (this.client.clientId) {
+        this.createClient({
+          clientId: this.client.clientId,
+          input
         })
+          .then((res) => {
+            if (res) {
+              this.pushMessage({
+                text: 'Cliente atualizado com sucesso',
+                type: 'success'
+              })
+            }
+          })
+      } else {
+        this.createClient({
+          input
+        })
+          .then((res) => {
+            if (res) {
+              this.pushMessage({
+                text: 'Cliente adicionado com sucesso',
+                type: 'success'
+              })
+            }
+          })
+      }
+      this.resetClient()
     },
-    openDel (lawyerId) {
-      this.lawyerSelect = lawyerId
+    cancelAdd () {
+      this.dialog = false
+      this.resetClient()
+    },
+    openDel (clientId) {
+      this.clientSelect = clientId
       this.confirmDialogVisible = true
     },
     confirmDel () {
-      this.deleteLawyer(this.lawyerSelect)
+      this.deleteClient(this.clientSelect)
         .then((res) => {
-          this.lawyerSelect = null
+          this.clientSelect = null
           this.confirmDialogVisible = false
           if (res) {
             this.pushMessage({
-              text: 'Advogado removido com sucesso',
+              text: 'Cliente removido com sucesso',
               type: 'success'
             })
           }
         })
     },
     cancelDel () {
-      this.lawyerSelect = null
+      this.clientSelect = null
       this.confirmDialogVisible = false
     }
   }
 }
 </script>
+
 <style lang="stylus" scoped>
 .title
   font-size 1.5rem
   font-weigth 700
-.table-headers
-  td:nth-of-type(1)
-    width 70%
-  td:nth-of-type(2)
-    width 10%
-  td:nth-of-type(3)
-    width 20%
-
 </style>

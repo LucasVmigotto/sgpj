@@ -100,7 +100,7 @@
               block
               @click="save"
             >
-              Salvar<v-icon>mdi-account-plus</v-icon>
+              Salvar <v-icon>mdi-account-plus</v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -146,7 +146,7 @@ export default {
     ]),
     rules: () => ({
       required: value => !!value || 'Campo obrigatório',
-      oab: value => value.length === 7 || 'OAB deve ter mínimo de 7 números',
+      oab: value => value.length === 7 || 'OAB deve ter 7 números',
       email: value => !!value.match(/^[\w\d]+@[\w\d]+(\.\w+)+$/) || 'E-mail deve ser válido',
       password: value => value.length > 6 || 'Senha deve ter no mínimo 6 caracteres'
     })

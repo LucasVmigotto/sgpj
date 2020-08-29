@@ -31,7 +31,7 @@ const lawyer = {
   actions: {
     async listLawyers ({
       state, commit, dispatch, rootState: { user: { token } }
-    }, { limit = state.limit, offset = state.offset }) {
+    }, { limit = state.limit, offset = state.offset } = {}) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         const { count, items } = await lawyerAPI.listLawyers({

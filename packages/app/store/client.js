@@ -5,7 +5,7 @@ const client = {
   state: () => ({
     clients: [],
     client: null,
-    limit: 100,
+    limit: 5,
     offset: 0,
     count: 0,
     page: 0,
@@ -31,7 +31,7 @@ const client = {
   actions: {
     async listClients ({
       state, commit, dispatch, rootState: { user: { token } }
-    }, { limit = state.limit, offset = state.offset }) {
+    }, { limit = state.limit, offset = state.offset } = {}) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         const { count, items } = await clientAPI.listClients({
@@ -53,6 +53,7 @@ const client = {
       try {
         const client = await clientAPI.getClient({ token, clientId })
         commit('CLIENT_CHANGED', client)
+        return client
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
         dispatch('setError', err, { root: true })
@@ -60,12 +61,24 @@ const client = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
+    resetClient ({ commit }) {
+      commit('CLIENT_CHANGED', {
+        name: '',
+        cpf: '',
+        email: '',
+        phone: ''
+      })
+    },
     async createClient ({
-      state, commit, dispatch, rootState: { user: { token } }
+      state, commit, dispatch, rootState: { user: { token, userLoggedIn } }
     }, { clientId, input }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         let data = null
+        input = {
+          ...input,
+          lawyerId: userLoggedIn.lawyerId
+        }
         if (clientId) {
           data = await clientAPI.updateClient({ token, clientId, input })
         } else {
@@ -102,7 +115,9 @@ const client = {
       }
     },
     jumpPage ({ state, commit, dispatch }, page) {
-      const offset = state.limit * page - state.limit
+      const offset = page !== 1
+        ? (page * state.limit) - state.limit
+        : 0
       dispatch('listClients', {
         limit: state.limit,
         offset
