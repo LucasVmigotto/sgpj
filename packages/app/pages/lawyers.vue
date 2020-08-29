@@ -131,8 +131,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      'pushMessage',
-      'dismissMessage'
+      'pushMessage'
     ]),
     ...mapActions('lawyer', [
       'listLawyers',
@@ -156,9 +155,6 @@ export default {
               text: 'Advogado adicionado com sucesso',
               type: 'success'
             })
-            setTimeout(() => {
-              this.dismissMessage()
-            }, this.messageTimeout)
           }
         })
     },
@@ -176,9 +172,6 @@ export default {
               text: 'Advogado removido com sucesso',
               type: 'success'
             })
-            setTimeout(() => {
-              this.dismissMessage()
-            }, this.messageTimeout)
           }
         })
     },

@@ -58,15 +58,15 @@ const store = {
         })
       }, state.timeout)
     },
-    pushMessage ({ commit }, { type, text }) {
+    pushMessage ({ state, commit }, { type, text }) {
       commit('PUSH_MESSAGE', {
         type, text, alertVisible: true
       })
-    },
-    dismissMessage ({ commit }) {
-      commit('PUSH_MESSAGE', {
-        alertVisible: false
-      })
+      setTimeout(() => {
+        commit('PUSH_MESSAGE', {
+          alertVisible: false
+        })
+      }, state.timeout)
     }
   }
 }
