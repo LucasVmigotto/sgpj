@@ -2,7 +2,6 @@
   <v-app>
     <v-navigation-drawer
       v-model="drawer"
-      :mini-variant="miniVariant"
       expand-on-hover
       :clipped="true"
       fixed
@@ -13,7 +12,7 @@
           <v-list-item-avatar>
             <v-avatar
               color="primary"
-              :size="miniVariant ? 36 : 48"
+              size="36"
             >
               <span>{{ avatarInitials() }}</span>
             </v-avatar>
@@ -46,6 +45,12 @@
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title v-text="title" />
+      <v-progress-linear
+        v-show="loading"
+        :loading="loading"
+        absolute
+        bottom
+      />
     </v-app-bar>
     <v-main>
       <v-container fluid>
@@ -75,7 +80,6 @@ export default {
     return {
       title: 'Sistema Gerenciador de Processos Juridícos',
       drawer: true,
-      miniVariant: false,
       items: [
         {
           icon: 'mdi-apps',
@@ -86,6 +90,11 @@ export default {
           icon: 'mdi-account-multiple',
           title: 'Advogados',
           to: '/lawyers'
+        },
+        {
+          icon: 'mdi-clipboard-account',
+          title: 'Clientes',
+          to: '/clients'
         },
         {
           icon: 'mdi-account-cog',
@@ -99,7 +108,8 @@ export default {
     ...mapGetters([
       'alertVisible',
       'messageText',
-      'messageType'
+      'messageType',
+      'loading'
     ]),
     ...mapGetters('user', [
       'userLoggedIn'

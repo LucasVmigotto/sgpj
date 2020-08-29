@@ -5,6 +5,7 @@
     align-center
   >
     <v-container>
+      <span class="title">Advogados</span>
       <v-row flex>
         <v-col cols="12">
           <v-data-table
@@ -21,16 +22,24 @@
                   <td>{{ el.name }}</td>
                   <td>{{ el.oab }}</td>
                   <td align="right">
-                    <v-icon>
-                      mdi-information
-                    </v-icon>
-                    <v-icon
+                    <v-btn
+                      small
+                      icon
+                    >
+                      <v-icon>
+                        mdi-information
+                      </v-icon>
+                    </v-btn>
+                    <v-btn
                       v-if="userInRoles(userLoggedIn, ['ADMIN'])"
-                      color="red"
+                      small
+                      icon
                       @click="openDel(el.lawyerId)"
                     >
-                      mdi-delete
-                    </v-icon>
+                      <v-icon color="red">
+                        mdi-delete
+                      </v-icon>
+                    </v-btn>
                   </td>
                 </tr>
               </tbody>
@@ -127,7 +136,7 @@ export default {
     ])
   },
   async created () {
-    await this.listLawyers(this.token)
+    await this.listLawyers()
   },
   methods: {
     ...mapActions([
@@ -147,7 +156,7 @@ export default {
     save (input) {
       this.dialog = false
       this.createLawyer({
-        token: this.token, input
+        input
       })
         .then((res) => {
           if (res) {
@@ -183,6 +192,9 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+.title
+  font-size 1.5rem
+  font-weigth 700
 .table-headers
   td:nth-of-type(1)
     width 70%
