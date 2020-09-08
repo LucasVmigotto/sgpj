@@ -10,7 +10,6 @@
             label="E-mail"
             hint="username@email.com"
             prepend-icon="mdi-account"
-            clearable
           />
           <v-text-field
             v-model="password"
@@ -74,7 +73,11 @@ export default {
           password: this.password
         }
       }).then((res) => {
-        this.$router.push({ name: 'dashboard' })
+        if (res) {
+          this.$router.push({ name: 'dashboard' })
+        } else {
+          this.password = ''
+        }
       }).catch((err) => {
         throw new Error(err)
       })

@@ -170,7 +170,7 @@ export default {
     },
     save (input) {
       this.dialog = false
-      if (this.client.clientId) {
+      if (this.client && this.client.clientId) {
         this.createClient({
           clientId: this.client.clientId,
           input

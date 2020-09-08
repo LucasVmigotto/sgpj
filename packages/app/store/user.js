@@ -21,6 +21,7 @@ const user = {
         const { lawyer, token } = await userAPI.login(login)
         commit('USER_LOGGED_IN_CHANGED', lawyer)
         commit('TOKEN_CHANGED', token)
+        return !!token
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
         dispatch('setError', err, { root: true })
