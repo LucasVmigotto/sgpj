@@ -29,6 +29,18 @@
         />
         <div v-else>
           <v-icon large>
+            mdi-book-account
+          </v-icon>
+          Sem processos no momento
+        </div>
+      </v-col>
+      <v-col cols="6">
+        <appointments-list
+          v-if="hasAppointments"
+          :appointments="client.appointments"
+        />
+        <div v-else>
+          <v-icon large>
             mdi-calendar-alert
           </v-icon>
           Sem compromissos no momento
@@ -40,8 +52,14 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import LawSuitsList from '../components/LawSuitsList'
+import AppointmentsList from '../components/AppointmentsList'
 
 export default {
+  components: {
+    LawSuitsList,
+    AppointmentsList
+  },
   computed: {
     ...mapGetters('client', [
       'client'

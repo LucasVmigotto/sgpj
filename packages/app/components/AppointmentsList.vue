@@ -5,24 +5,17 @@
         <thead>
           <tr>
             <th>Título</th>
-            <th>Descrição</th>
+            <th>Data</th>
             <th>Ações</th>
           </tr>
         </thead>
         <tbody>
           <tr
-            v-for="(el, index) in lawSuits"
+            v-for="(el, index) in appointments"
             :key="index"
           >
             <td>{{ el.title }}</td>
-            <td>
-              <span
-                class="d-inline-block text-truncate"
-                style="max-width: 150px;"
-              >
-                {{ el.description }}
-              </span>
-            </td>
+            <td>{{ formatDate(el.eventDate) }}</td>
             <td>
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
@@ -35,7 +28,7 @@
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
                 </template>
-                <span>Atualizar processo</span>
+                <span>Atualizar compromisso</span>
               </v-tooltip>
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
@@ -48,7 +41,7 @@
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
                 </template>
-                <span>Remover processo</span>
+                <span>Remover compromisso</span>
               </v-tooltip>
             </td>
           </tr>
@@ -63,20 +56,27 @@
           outlined
           v-on="on"
         >
-          <v-icon>mdi-book-plus</v-icon>
+          <v-icon>mdi-calendar-plus</v-icon>
         </v-btn>
       </template>
-      <span>Adicionar processo</span>
+      <span>Adicionar compromisso</span>
     </v-tooltip>
   </div>
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
   props: {
-    lawSuits: {
+    appointments: {
       type: Array,
       required: true
+    }
+  },
+  methods: {
+    formatDate (date) {
+      return moment(date).locale('pt-BR').format('LLL')
     }
   }
 }
