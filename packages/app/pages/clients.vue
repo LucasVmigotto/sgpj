@@ -50,6 +50,21 @@
                       </template>
                       <span>Excluir cliente</span>
                     </v-tooltip>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          small
+                          icon
+                          v-on="on"
+                          @click="goToClient(el.clientId)"
+                        >
+                          <v-icon>mdi-chevron-right-box</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>
+                        Visualizar cliente
+                      </span>
+                    </v-tooltip>
                   </td>
                 </tr>
               </tbody>
@@ -234,6 +249,14 @@ export default {
     cancelDel () {
       this.clientSelect = null
       this.confirmDialogVisible = false
+    },
+    goToClient (clientId) {
+      this.getClient(clientId)
+        .then((res) => {
+          if (res && res.clientId && res.clientId === clientId) {
+            this.$router.push({ name: 'clientDashboard' })
+          }
+        })
     }
   }
 }

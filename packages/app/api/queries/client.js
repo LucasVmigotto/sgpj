@@ -35,6 +35,14 @@ const QUERY_GET_CLIENT = token => `
           createAt
           updateAt
         }
+        appointments {
+          appointmentId
+          title
+          description
+          eventDate
+          createAt
+          updateAt
+        }
         createAt
         updateAt
       }
