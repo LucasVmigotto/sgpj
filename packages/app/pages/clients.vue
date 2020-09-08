@@ -20,24 +20,36 @@
                   <td>{{ el.email }}</td>
                   <td>{{ el.phone }}</td>
                   <td align="right">
-                    <v-btn
-                      small
-                      icon
-                      @click="setClient(el.clientId)"
-                    >
-                      <v-icon color="primary">
-                        mdi-pencil
-                      </v-icon>
-                    </v-btn>
-                    <v-btn
-                      small
-                      icon
-                      @click="openDel(el.clientId)"
-                    >
-                      <v-icon color="red">
-                        mdi-delete
-                      </v-icon>
-                    </v-btn>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          small
+                          icon
+                          v-on="on"
+                          @click="setClient(el.clientId)"
+                        >
+                          <v-icon color="primary">
+                            mdi-pencil
+                          </v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Editar cliente</span>
+                    </v-tooltip>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          small
+                          icon
+                          v-on="on"
+                          @click="openDel(el.clientId)"
+                        >
+                          <v-icon color="red">
+                            mdi-delete
+                          </v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Excluir cliente</span>
+                    </v-tooltip>
                   </td>
                 </tr>
               </tbody>

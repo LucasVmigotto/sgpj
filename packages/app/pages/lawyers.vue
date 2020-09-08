@@ -22,24 +22,36 @@
                   <td>{{ el.name }}</td>
                   <td>{{ el.oab }}</td>
                   <td align="right">
-                    <v-btn
-                      small
-                      icon
-                    >
-                      <v-icon>
-                        mdi-information
-                      </v-icon>
-                    </v-btn>
-                    <v-btn
-                      v-if="userInRoles(userLoggedIn, ['ADMIN'])"
-                      small
-                      icon
-                      @click="openDel(el.lawyerId)"
-                    >
-                      <v-icon color="red">
-                        mdi-delete
-                      </v-icon>
-                    </v-btn>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          small
+                          icon
+                          v-on="on"
+                        >
+                          <v-icon>
+                            mdi-information
+                          </v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Mais Informações</span>
+                    </v-tooltip>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          v-if="userInRoles(userLoggedIn, ['ADMIN'])"
+                          small
+                          icon
+                          v-on="on"
+                          @click="openDel(el.lawyerId)"
+                        >
+                          <v-icon color="red">
+                            mdi-delete
+                          </v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Ecluir Advogado</span>
+                    </v-tooltip>
                   </td>
                 </tr>
               </tbody>
