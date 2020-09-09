@@ -53,12 +53,16 @@ const lawsuit = {
       try {
         const lawSuit = await lawSuitAPI.getLawSuit({ token, lawSuitId })
         commit('LAWSUIT_CHANGED', lawSuit)
+        return lawSuit
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
         dispatch('setError', err, { root: true })
       } finally {
         commit('LOADING_CHANGED', false, { root: true })
       }
+    },
+    resetLawSuit ({ commit }) {
+      commit('LAWSUIT_CHANGED', null)
     },
     async createLawSuit ({
       state, commit, dispatch, rootState: { user: { token } }

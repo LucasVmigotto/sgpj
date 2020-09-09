@@ -3,7 +3,7 @@ import { gql } from '../gql'
 const QUERY_LIST_APPOINTMENT = token => `
   query ($limit: Int, $offset: Int) {
     viewer(token: "${token}") {
-      appointments(limit: $limti, offset: $offset) {
+      appointments(limit: $limit, offset: $offset) {
         count
         items {
           appointmentId
