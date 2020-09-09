@@ -3,7 +3,7 @@ import { gql } from '../gql'
 const QUERY_LIST_LAWSUITS = token => `
   query ($limit: Int, $offset: Int) {
     viewer(token: "${token}") {
-      lawSuits(limit: $limti, offset: $offset) {
+      lawSuits(limit: $limit, offset: $offset) {
         count
         items {
           lawSuitId
