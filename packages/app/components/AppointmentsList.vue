@@ -48,19 +48,6 @@
         </tbody>
       </template>
     </v-simple-table>
-    <v-tooltip bottom>
-      <template v-slot:activator="{ on }">
-        <v-btn
-          color="green"
-          block
-          outlined
-          v-on="on"
-        >
-          <v-icon>mdi-calendar-plus</v-icon>
-        </v-btn>
-      </template>
-      <span>Adicionar compromisso</span>
-    </v-tooltip>
   </div>
 </template>
 

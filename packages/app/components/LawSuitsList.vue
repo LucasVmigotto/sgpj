@@ -31,6 +31,7 @@
                     icon
                     small
                     v-on="on"
+                    @click="edit(el.lawSuitId)"
                   >
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
@@ -44,6 +45,7 @@
                     icon
                     small
                     v-on="on"
+                    @click="remove(el.lawSuitId)"
                   >
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
@@ -55,19 +57,6 @@
         </tbody>
       </template>
     </v-simple-table>
-    <v-tooltip bottom>
-      <template v-slot:activator="{ on }">
-        <v-btn
-          color="green"
-          block
-          outlined
-          v-on="on"
-        >
-          <v-icon>mdi-book-plus</v-icon>
-        </v-btn>
-      </template>
-      <span>Adicionar processo</span>
-    </v-tooltip>
   </div>
 </template>
 
@@ -77,6 +66,14 @@ export default {
     lawSuits: {
       type: Array,
       required: true
+    }
+  },
+  methods: {
+    edit (id) {
+      this.$emit('edit', id)
+    },
+    remove (id) {
+      this.$emit('remove', id)
     }
   }
 }
