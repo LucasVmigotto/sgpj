@@ -24,6 +24,7 @@
                     icon
                     small
                     v-on="on"
+                    @click="edit(el.appointmentId)"
                   >
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
@@ -37,6 +38,7 @@
                     icon
                     small
                     v-on="on"
+                    @click="remove(el.appointmentId)"
                   >
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
@@ -64,6 +66,12 @@ export default {
   methods: {
     formatDate (date) {
       return moment(date).locale('pt-BR').format('LLL')
+    },
+    edit (id) {
+      this.$emit('edit', id)
+    },
+    remove (id) {
+      this.$emit('remove', id)
     }
   }
 }
