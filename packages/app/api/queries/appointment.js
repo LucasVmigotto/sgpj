@@ -48,7 +48,7 @@ const MUTATION_CREATE_APPOINTMENT = token => `
 const MUTATION_UPDATE_APPOINTMENT = token => `
   mutation ($appointmentId: ID, $input: AppointmentInput!) {
     authorization(token: "${token}") { lawyerId }
-    persistClient(appointmentId: $appointmentId, input: $input) {
+    persistAppointment(appointmentId: $appointmentId, input: $input) {
       appointmentId
       title
       description
