@@ -1,13 +1,27 @@
 <template>
-  <v-app dark>
+  <v-app>
     <v-navigation-drawer
       v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="false"
+      expand-on-hover
+      :clipped="true"
       fixed
       app
     >
       <v-list>
+        <v-list-item>
+          <v-list-item-avatar>
+            <v-avatar
+              color="primary"
+              size="36"
+            >
+              <span>{{ avatarInitials() }}</span>
+            </v-avatar>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title>{{ userLoggedIn.name }}</v-list-item-title>
+            <v-list-item-subtitle>OAB: {{ userLoggedIn.oab }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
         <v-list-item
           v-for="(item, i) in items"
           :key="i"
@@ -23,34 +37,35 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <v-footer
-        :absolute="!fixed"
-        app
-      >
-        <span
-          v-show="!miniVariant"
-        >
-          &copy; {{ new Date().getFullYear() }}
-        </span>
-        <v-spacer />
-        <v-btn
-          icon
-          @click.stop="miniVariant = !miniVariant"
-        >
-          <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-        </v-btn>
-      </v-footer>
     </v-navigation-drawer>
     <v-app-bar
-      :clipped-left="false"
+      :clipped-left="true"
       fixed
       app
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title v-text="title" />
+      <v-progress-linear
+        v-show="loading"
+        :loading="loading"
+        absolute
+        bottom
+      />
     </v-app-bar>
     <v-main>
-      <v-container>
+      <v-container fluid>
+        <v-alert
+          v-model="alertVisible"
+          :type="messageType"
+          transition="slide-x-transition"
+          elevation="9"
+          border="right"
+          class="front"
+          colored-border
+          absolute
+        >
+          {{ messageText }}
+        </v-alert>
         <nuxt />
       </v-container>
     </v-main>
@@ -58,22 +73,54 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data () {
     return {
-      drawer: false,
-      fixed: false,
+      title: 'Sistema Gerenciador de Processos Juridícos',
+      drawer: true,
       items: [
         {
           icon: 'mdi-apps',
           title: 'Dashboard',
-          to: '/'
+          to: '/dashboard'
+        },
+        {
+          icon: 'mdi-account-multiple',
+          title: 'Advogados',
+          to: '/lawyers'
+        },
+        {
+          icon: 'mdi-clipboard-account',
+          title: 'Clientes',
+          to: '/clients'
+        },
+        {
+          icon: 'mdi-account-cog',
+          title: 'Configuração de perfil',
+          to: '/editProfile'
         }
-      ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Sistema Gerenciador de Processos Juridícos'
+      ]
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'alertVisible',
+      'messageText',
+      'messageType',
+      'loading'
+    ]),
+    ...mapGetters('user', [
+      'userLoggedIn'
+    ])
+  },
+  methods: {
+    avatarInitials () {
+      const words = this.userLoggedIn.name.split(' ')
+      const firstLetter = words[0].charAt(0)
+      const lastLetter = words[words.length - 1].charAt(0)
+      return `${firstLetter}${lastLetter}`
     }
   }
 }

@@ -3,7 +3,10 @@ name: SGPJ Lint CI
 on:
   push:
     branches:
-      - '*'
+      - master
+      - dev
+      - 'api/*'
+      - 'app/*'
 
 jobs:
   lint:

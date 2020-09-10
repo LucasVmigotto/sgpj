@@ -131,6 +131,12 @@ const resolvers = {
         if (!input.user) {
           throw new Error('To create a new Lawyer, first you must inform the user access info')
         }
+        const [exists] = await knex('user')
+          .select('email')
+          .where({ email: input.user.email })
+        if (exists) {
+          throw new Error('This email already has been taken')
+        }
         const user = {
           email: input.user.email,
           password: cipher(input.user.password)
