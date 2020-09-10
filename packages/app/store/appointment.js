@@ -53,6 +53,7 @@ const appointment = {
       try {
         const appointment = await appointmentAPI.getAppointment({ token, appointmentId })
         commit('APPOINTMENT_CHANGED', appointment)
+        return appointment
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
         dispatch('setError', err, { root: true })
@@ -60,7 +61,10 @@ const appointment = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
-    async createClient ({
+    resetAppointment ({ commit }) {
+      commit('APPOINTMENT_CHANGED', null)
+    },
+    async createAppointment ({
       state, commit, dispatch, rootState: { user: { token } }
     }, { appointmentId, input }) {
       commit('LOADING_CHANGED', true, { root: true })
