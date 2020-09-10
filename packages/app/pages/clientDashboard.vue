@@ -55,6 +55,8 @@
         <appointments-list
           v-if="hasAppointments"
           :appointments="client.appointments"
+          @edit="editAppointment"
+          @remove="removeAppointment"
         />
         <div v-else>
           <v-icon large>
@@ -70,6 +72,7 @@
               block
               outlined
               v-on="on"
+              @click="appointmentDialog = true"
             >
               <v-icon>mdi-calendar-plus</v-icon>
             </v-btn>
@@ -82,6 +85,11 @@
       :dialog="lawSuitDialog"
       @save="saveLawSuit"
       @close="lawSuitDialog = false"
+    />
+    <appointment-dialog
+      :dialog="appointmentDialog"
+      @save="saveAppointment"
+      @close="appointmentDialog = false"
     />
     <confirm-action
       :visible="confirmDialogVisible"
@@ -97,15 +105,18 @@ import { mapActions, mapGetters } from 'vuex'
 import LawSuitsList from '../components/LawSuitsList'
 import AppointmentsList from '../components/AppointmentsList'
 import LawSuitDialog from '../components/LawSuitDialog'
+import AppointmentDialog from '../components/AppointmentDialog'
 
 export default {
   components: {
     LawSuitsList,
     AppointmentsList,
-    LawSuitDialog
+    LawSuitDialog,
+    AppointmentDialog
   },
   data: () => ({
     lawSuitDialog: false,
+    appointmentDialog: false,
     appointmentSelected: null,
     lawSuitSelected: null,
     confirmDialogVisible: false
@@ -119,6 +130,9 @@ export default {
     ]),
     ...mapGetters('lawsuit', [
       'lawSuit'
+    ]),
+    ...mapGetters('appointment', [
+      'appointment'
     ]),
     hasLawSuits () {
       return this.client.lawSuits.length > 0
@@ -136,6 +150,12 @@ export default {
       'resetLawSuit',
       'createLawSuit',
       'deleteLawSuit'
+    ]),
+    ...mapActions('appointment', [
+      'getAppointment',
+      'resetAppointment',
+      'createAppointment',
+      'deleteAppointment'
     ]),
     ...mapActions('client', [
       'getClient'
@@ -188,10 +208,56 @@ export default {
       this.lawSuitSelected = lawSuitId
       this.confirmDialogVisible = true
     },
+    saveAppointment (input) {
+      this.appointmentDialog = false
+      if (this.appointment && this.appointment.appointmentId) {
+        this.createAppointment({
+          appointmentId: this.appointment.appointmentId,
+          input
+        })
+          .then(async (res) => {
+            if (res && res.appointmentId) {
+              this.pushMessage({
+                type: 'success',
+                text: 'Compromisso atualizado com sucesso'
+              })
+              this.resetAppointment()
+              await this.refreshClient()
+            }
+          })
+      } else {
+        this.createAppointment({ input })
+          .then(async (res) => {
+            if (res && res.appointmentId) {
+              this.pushMessage({
+                type: 'success',
+                text: 'Compromisso adicionado com sucesso'
+              })
+              await this.refreshClient()
+            }
+          })
+      }
+    },
+    editAppointment (appointmentId) {
+      this.getAppointment(appointmentId)
+        .then((res) => {
+          if (res && res.appointmentId) {
+            this.appointmentDialog = true
+          }
+        })
+    },
+    removeAppointment (appointmentId) {
+      this.appointmentSelected = appointmentId
+      this.confirmDialogVisible = true
+    },
     cancelDel () {
       this.lawSuitSelected = null
       this.appointmentSelected = null
       this.confirmDialogVisible = false
+    },
+    resetSelected () {
+      this.lawSuitSelected = null
+      this.appointmentSelected = null
     },
     confirmDel () {
       this.confirmDialogVisible = false
@@ -208,9 +274,21 @@ export default {
               await this.refreshClient()
             }
           })
+        this.resetSelected()
       }
-      this.lawSuitSelected = null
-      this.appointmentSelected = null
+      if (this.appointmentSelected) {
+        this.deleteAppointment(this.appointmentSelected)
+          .then(async (res) => {
+            if (res) {
+              this.pushMessage({
+                type: 'success',
+                text: 'Compromisso removido com sucesso'
+              })
+              await this.refreshClient()
+            }
+          })
+        this.resetSelected()
+      }
     }
   }
 }
