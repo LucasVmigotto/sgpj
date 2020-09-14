@@ -31,6 +31,7 @@ const typeDefs = gql`
   extend type Viewer {
     appointment(appointmentId: ID!): Appointment!
     appointments(limit: Int, offset: Int): AppointmentList!
+    appointmentsByLawyer(lawyerId: ID!): [Appointment]!
   }
 
   extend type Mutation {
@@ -73,6 +74,20 @@ const resolvers = {
         count,
         items: data.map(el => camelizeKeys(el))
       }
+    },
+    async appointmentsByLawyer (_, { lawyerId }, { knex }) {
+      const data = await knex('appointment')
+        .select(
+          'appointment_id',
+          'title',
+          'description',
+          'event_start',
+          'event_end',
+          'create_at',
+          'update_at'
+        )
+        .where({ lawyer_id: lawyerId })
+      return data.map(el => camelizeKeys(el))
     }
   },
   Mutation: {
