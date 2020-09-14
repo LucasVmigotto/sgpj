@@ -7,7 +7,8 @@ const typeDefs = gql`
     appointmentId: ID!
     title: String!
     description: String!
-    eventDate: DateTime!
+    eventStart: DateTime!
+    eventEnd: DateTime!
     createAt: DateTime!
     updateAt: DateTime!
   }
@@ -20,7 +21,8 @@ const typeDefs = gql`
   input AppointmentInput {
     title: String!
     description: String!
-    eventDate: DateTime!
+    eventStart: DateTime!
+    eventEnd: DateTime!
     lawyerId: ID!
     clientId: ID!
     lawSuitId: ID!
@@ -45,19 +47,13 @@ const resolvers = {
           'appointment_id',
           'title',
           'description',
-          'event_date',
+          'event_start',
+          'event_end',
           'create_at',
           'update_at'
         )
         .where({ appointment_id: appointmentId })
-      return {
-        appointmentId: data.appointment_id,
-        title: data.title,
-        description: data.description,
-        eventDate: data.event_date,
-        createAt: data.create_at,
-        updateAt: data.update_at
-      }
+      return camelizeKeys(data)
     },
     async appointments (_, { limit = 100, offset = 0 }, { knex }) {
       const data = await knex('appointment')
@@ -65,7 +61,8 @@ const resolvers = {
           'appointment_id',
           'title',
           'description',
-          'event_date',
+          'event_start',
+          'event_end',
           'create_at',
           'update_at'
         )
@@ -74,16 +71,7 @@ const resolvers = {
       const [{ count }] = await knex('appointment').count('appointment_id')
       return {
         count,
-        items: data.map(el => {
-          return {
-            appointmentId: el.appointment_id,
-            title: el.title,
-            description: el.description,
-            eventDate: el.event_date,
-            createAt: el.create_at,
-            updateAt: el.update_at
-          }
-        })
+        items: data.map(el => camelizeKeys(el))
       }
     }
   },

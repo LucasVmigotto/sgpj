@@ -41,7 +41,8 @@ const getAppointments = async (knex, id, identifier) =>
       'appointment_id',
       'title',
       'description',
-      'event_date',
+      'event_start',
+      'event_end',
       'create_at',
       'update_at'
     )
