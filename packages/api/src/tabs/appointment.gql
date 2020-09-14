@@ -6,7 +6,8 @@ query Appointments ($lawyer: String!) {
         appointmentId
         title
         description
-        eventDate
+        eventStart
+        eventEnd
         createAt
         updateAt
       }
@@ -19,7 +20,8 @@ query Appointment ($lawyer: String!) {
       appointmentId
       title
       description
-      eventDate
+      eventStart
+      eventEnd
       createAt
       updateAt
     }
@@ -34,7 +36,8 @@ mutation CreateAppointment ($lawyer: String!) {
     input: {
       title: "Appointment Title",
       description: "Appointment Description",
-      eventDate: "2020-12-20T18:21:28.196Z",
+      eventStart: "2020-12-20T18:21:28.196Z",
+      eventEnd: "2020-12-20T18:21:28.196Z",
       lawyerId: 1,
       clientId: 1,
       lawSuitId: 1
@@ -43,7 +46,8 @@ mutation CreateAppointment ($lawyer: String!) {
     appointmentId
     title
     description
-    eventDate
+    eventStart
+    eventEnd
     createAt
     updateAt
   }
@@ -58,7 +62,8 @@ mutation UpdateAppointment ($lawyer: String!) {
     input: {
       title: "Appointment Title CHANGED",
       description: "Appointment Description CHANGED",
-      eventDate: "2020-12-20T18:21:28.196Z",
+      eventStart: "2020-12-20T18:21:28.196Z",
+      eventEnd: "2020-12-20T18:21:28.196Z",
       lawyerId: 1,
       clientId: 1,
       lawSuitId: 1
@@ -67,7 +72,8 @@ mutation UpdateAppointment ($lawyer: String!) {
     appointmentId
     title
     description
-    eventDate
+    eventStart
+    eventEnd
     createAt
     updateAt
   }

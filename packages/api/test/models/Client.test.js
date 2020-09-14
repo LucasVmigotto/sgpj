@@ -91,7 +91,8 @@ describe('Models:Client', function () {
                 appointmentId
                 title
                 description
-                eventDate
+                eventStart
+                eventEnd
                 createAt
                 updateAt
               }

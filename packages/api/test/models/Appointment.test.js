@@ -35,7 +35,8 @@ describe('Models:Appointment', function () {
                 appointmentId
                 title
                 description
-                eventDate
+                eventStart
+                eventEnd
                 createAt
                 updateAt
               }
@@ -70,7 +71,8 @@ describe('Models:Appointment', function () {
               appointmentId
               title
               description
-              eventDate
+              eventStart
+              eventEnd
               createAt
               updateAt
             }
@@ -95,7 +97,8 @@ describe('Models:Appointment', function () {
       expect(item).to.have.property('appointmentId')
       expect(item).to.have.property('title')
       expect(item).to.have.property('description')
-      expect(item).to.have.property('eventDate')
+      expect(item).to.have.property('eventStart')
+      expect(item).to.have.property('eventEnd')
       expect(item).to.have.property('createAt')
       expect(item).to.have.property('updateAt')
       expect(item).to.be.deep.equal(appointment)
@@ -111,7 +114,8 @@ describe('Models:Appointment', function () {
             appointmentId
             title
             description
-            eventDate
+            eventStart
+            eventEnd
             createAt
             updateAt
           }
@@ -122,7 +126,8 @@ describe('Models:Appointment', function () {
         input: {
           title: 'Appointment Title',
           description: 'Appointment Description',
-          eventDate: new Date().toISOString(),
+          eventStart: new Date().toISOString(),
+          eventEnd: new Date().toISOString(),
           clientId: 1,
           lawyerId: 1,
           lawSuitId: 1
@@ -144,7 +149,8 @@ describe('Models:Appointment', function () {
       expect(appointment).to.have.property('appointmentId')
       expect(appointment).to.have.property('title')
       expect(appointment).to.have.property('description')
-      expect(appointment).to.have.property('eventDate')
+      expect(appointment).to.have.property('eventStart')
+      expect(appointment).to.have.property('eventEnd')
       expect(appointment).to.have.property('createAt')
       expect(appointment).to.have.property('updateAt')
     })
@@ -157,7 +163,8 @@ describe('Models:Appointment', function () {
               appointmentId
               title
               description
-              eventDate
+              eventStart
+              eventEnd
               createAt
               updateAt
             }
@@ -169,7 +176,8 @@ describe('Models:Appointment', function () {
           input: {
             title: 'Appointment Title CHANGED',
             description: 'Appointment Description CHANGED',
-            eventDate: new Date().toISOString(),
+            eventStart: new Date().toISOString(),
+            eventEnd: new Date().toISOString(),
             clientId: 1,
             lawyerId: 1,
             lawSuitId: 1
