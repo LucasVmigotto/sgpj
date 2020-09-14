@@ -13,6 +13,7 @@
             <v-icon>mdi-chevron-left</v-icon>
           </v-btn>
         </template>
+        <span>Voltar</span>
       </v-tooltip>
       <v-col
         class="greet"
@@ -84,12 +85,12 @@
     <law-suit-dialog
       :dialog="lawSuitDialog"
       @save="saveLawSuit"
-      @close="lawSuitDialog = false"
+      @close="closeDialog('lawSuit')"
     />
     <appointment-dialog
       :dialog="appointmentDialog"
       @save="saveAppointment"
-      @close="appointmentDialog = false"
+      @close="closeDialog('appointment')"
     />
     <confirm-action
       :visible="confirmDialogVisible"
@@ -160,6 +161,16 @@ export default {
     ...mapActions('client', [
       'getClient'
     ]),
+    closeDialog (dialog) {
+      if (dialog === 'lawSuit') {
+        this.lawSuitDialog = false
+        this.resetLawSuit()
+      }
+      if (dialog === 'appointment') {
+        this.appointmentDialog = false
+        this.resetAppointment()
+      }
+    },
     async refreshClient () {
       await this.getClient(this.client.clientId)
     },
