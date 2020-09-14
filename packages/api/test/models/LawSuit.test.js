@@ -73,7 +73,8 @@ describe('Models:LawSuit', function () {
                 appointmentId
                 title
                 description
-                eventDate
+                eventStart
+                eventEnd
                 createAt
                 updateAt
               }

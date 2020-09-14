@@ -99,7 +99,8 @@ describe('Models:Lawyer', function () {
                 appointmentId
                 title
                 description
-                eventDate
+                eventStart
+                eventEnd
                 createAt
                 updateAt
               }
