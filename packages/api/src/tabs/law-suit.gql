@@ -22,7 +22,8 @@ query LawSuit ($lawyer: String!) {
         appointmentId
         title
         description
-        eventDate
+        eventStart
+        eventEnd
         createAt
         updateAt
       }
