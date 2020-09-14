@@ -1,3 +1,16 @@
+query AppointmentsByLawyer ($lawyer: String!) {
+  viewer(token: $lawyer) {
+    appointmentsByLawyer(lawyerId: 1) {
+      appointmentId
+      title
+      description
+      eventStart
+      eventEnd
+      createAt
+      updateAt
+    }
+  }
+}
 query Appointments ($lawyer: String!) {
   viewer(token: $lawyer) {
     appointments(limit: 10, offset: 0) {
