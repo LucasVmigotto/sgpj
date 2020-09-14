@@ -28,7 +28,8 @@ const QUERY_GET_LAWSUIT = token => `
           appointmentId
           title
           description
-          eventDate
+          eventStart
+          eventEnd
           createAt
           updateAt
         }

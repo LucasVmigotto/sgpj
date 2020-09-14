@@ -9,7 +9,8 @@ const QUERY_LIST_APPOINTMENT = token => `
           appointmentId
           title
           description
-          eventDate
+          eventStart
+          eventEnd
           createAt
           updateAt
         }
@@ -25,7 +26,8 @@ const QUERY_GET_APPOINTMENT = token => `
         appointmentId
         title
         description
-        eventDate
+        eventStart
+        eventEnd
         createAt
         updateAt
       }
@@ -40,7 +42,8 @@ const MUTATION_CREATE_APPOINTMENT = token => `
       appointmentId
       title
       description
-      eventDate
+      eventStart
+      eventEnd
     }
   }
 `
@@ -52,7 +55,8 @@ const MUTATION_UPDATE_APPOINTMENT = token => `
       appointmentId
       title
       description
-      eventDate
+      eventStart
+      eventEnd
       createAt
       updateAt
     }

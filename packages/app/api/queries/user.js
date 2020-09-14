@@ -21,7 +21,8 @@ const MUTATION_USER_LOGIN = `
         appointments {
           appointmentId
           title
-          eventDate
+          eventStart
+          eventEnd
         }
       }
     }

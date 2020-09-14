@@ -39,7 +39,8 @@ const QUERY_GET_CLIENT = token => `
           appointmentId
           title
           description
-          eventDate
+          eventStart
+          eventEnd
           createAt
           updateAt
         }
