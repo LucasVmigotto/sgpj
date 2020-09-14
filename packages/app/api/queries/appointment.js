@@ -19,6 +19,22 @@ const QUERY_LIST_APPOINTMENT = token => `
   }
 `
 
+const QUERY_LIST_APPOINTMENT_BY_LAWYER = token => `
+  query ($lawyerId: ID!) {
+    viewer(token: "${token}") {
+      appointmentsByLawyer(lawyerId: $lawyerId) {
+        appointmentId
+        title
+        description
+        eventStart
+        eventEnd
+        createAt
+        updateAt
+      }
+    }
+  }
+`
+
 const QUERY_GET_APPOINTMENT = token => `
   query ($appointmentId: ID!) {
     viewer(token: "${token}") {
@@ -74,6 +90,13 @@ export async function listAppointments ({ token, limit, offset }) {
     viewer: { appointments }
   } = await gql(QUERY_LIST_APPOINTMENT(token), { limit, offset })
   return appointments
+}
+
+export async function appointmentsByLawyer ({ token, lawyerId }) {
+  const {
+    viewer: { appointmentsByLawyer }
+  } = await gql(QUERY_LIST_APPOINTMENT_BY_LAWYER(token), { lawyerId })
+  return appointmentsByLawyer
 }
 
 export async function getAppointment ({ token, appointmentId }) {
