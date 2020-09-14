@@ -15,7 +15,7 @@
             :key="index"
           >
             <td>{{ el.title }}</td>
-            <td>{{ formatDate(el.eventDate) }}</td>
+            <td>{{ formatDate(el.eventStart) }} até {{ formatDate(el.eventEnd, 'HH:MM') }}</td>
             <td>
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
@@ -64,8 +64,8 @@ export default {
     }
   },
   methods: {
-    formatDate (date) {
-      return moment(date).locale('pt-BR').format('LLL')
+    formatDate (date, pattern = 'LLL') {
+      return moment(date).locale('pt-BR').format(pattern)
     },
     edit (id) {
       this.$emit('edit', id)
