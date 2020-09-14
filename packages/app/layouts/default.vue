@@ -87,6 +87,11 @@ export default {
           to: '/dashboard'
         },
         {
+          icon: 'mdi-calendar-today',
+          title: 'Agenda',
+          to: '/schedule'
+        },
+        {
           icon: 'mdi-account-multiple',
           title: 'Advogados',
           to: '/lawyers'
