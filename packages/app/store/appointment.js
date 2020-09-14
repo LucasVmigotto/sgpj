@@ -4,6 +4,7 @@ const appointment = {
   namespaced: true,
   state: () => ({
     appointments: [],
+    appointmentsByLawyer: [],
     appointment: null,
     limit: 5,
     offset: 0,
@@ -13,6 +14,7 @@ const appointment = {
   }),
   getters: {
     appointments (state) { return state.appointments },
+    appointmentsByLawyer (state) { return state.appointmentsByLawyer },
     appointment (state) { return state.appointment },
     limit (state) { return state.limit },
     offset (state) { return state.offset },
@@ -22,6 +24,9 @@ const appointment = {
   },
   mutations: {
     APPOINTMENTS_CHANGED (state, appointments) { state.appointments = appointments },
+    APPOINTMENTS_BY_LAWYER_CHANGED (state, appointments) {
+      state.appointmentsByLawyer = appointments
+    },
     APPOINTMENT_CHANGED (state, appointment) { state.appointment = appointment },
     LIMIT_CHANGED (state, limit) { state.limit = limit },
     OFFSET_CHANGED (state, offset) { state.offset = offset },
@@ -39,6 +44,22 @@ const appointment = {
         })
         commit('APPOINTMENTS_CHANGED', items)
         commit('COUNT_CHANGED', count)
+      } catch (err) {
+        commit('ERROR_CHANGED', err, { root: true })
+        dispatch('setError', err, { root: true })
+      } finally {
+        commit('LOADING_CHANGED', false, { root: true })
+      }
+    },
+    async getAppointmentsByLawyer ({
+      commit, dispatch, rootState: { user: { token, userLoggedIn } }
+    }) {
+      commit('LOADING_CHANGED', true, { root: true })
+      try {
+        const appointments = await appointmentAPI.appointmentsByLawyer({
+          token, lawyerId: userLoggedIn.lawyerId
+        })
+        commit('APPOINTMENTS_BY_LAWYER_CHANGED', appointments)
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
         dispatch('setError', err, { root: true })
