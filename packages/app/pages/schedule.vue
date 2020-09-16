@@ -1,38 +1,35 @@
 <template>
   <v-layout column>
-    <v-row justify="space-around">
-      <v-btn
-        color="primary"
-        fab
-        outlined
-        icon
-        small
-        @click="prev"
-      >
-        <v-icon>mdi-chevron-left</v-icon>
-      </v-btn>
-      <span v-if="$refs.calendar">
-        {{ $refs.calendar.title }}
-      </span>
-      <v-btn
-        color="primary"
-        fab
-        outlined
-        icon
-        small
-        @click="next"
-      >
-        <v-icon>mdi-chevron-right</v-icon>
-      </v-btn>
+    <v-row>
+      <v-col cols="2" justify-content="center">
+        <v-btn
+          :disabled="calendarType !== 'day'"
+          color="primary"
+          text
+          outlined
+          block
+          @click="calendarType = 'month'"
+        >
+          Mês
+        </v-btn>
+      </v-col>
+      <v-col cols="10" justify-items="center">
+        <span v-if="$refs.calendar">
+          {{ capWord($refs.calendar.title) }}
+        </span>
+      </v-col>
     </v-row>
     <v-row>
       <v-col cols="12">
         <v-sheet height="450">
           <v-calendar
             ref="calendar"
+            v-model="focus"
             :events="events"
-            type="month"
+            :type="calendarType"
+            locale="pt-br"
             @click:event="showEvent"
+            @click:more="viewDay"
           />
           <v-menu
             v-model="selectedOpen"
@@ -74,6 +71,8 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   data: () => ({
+    calendarType: 'month',
+    focus: '',
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false
@@ -102,6 +101,7 @@ export default {
     ...mapActions('appointment', [
       'getAppointmentsByLawyer'
     ]),
+    capWord: v => `${v.substring(0, 1).toUpperCase()}${v.substring(1, v.length)}`,
     format (date) {
       return moment(date).format('YYYY-MM-DD HH:mm')
     },
@@ -110,6 +110,10 @@ export default {
     },
     next () {
       this.$refs.calendar.next()
+    },
+    viewDay ({ date }) {
+      this.focus = date
+      this.calendarType = 'day'
     },
     showEvent ({ nativeEvent, event }) {
       const open = () => {
