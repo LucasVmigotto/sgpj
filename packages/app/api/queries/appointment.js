@@ -9,10 +9,27 @@ const QUERY_LIST_APPOINTMENT = token => `
           appointmentId
           title
           description
-          eventDate
+          eventStart
+          eventEnd
           createAt
           updateAt
         }
+      }
+    }
+  }
+`
+
+const QUERY_LIST_APPOINTMENT_BY_LAWYER = token => `
+  query ($lawyerId: ID!) {
+    viewer(token: "${token}") {
+      appointmentsByLawyer(lawyerId: $lawyerId) {
+        appointmentId
+        title
+        description
+        eventStart
+        eventEnd
+        createAt
+        updateAt
       }
     }
   }
@@ -25,7 +42,8 @@ const QUERY_GET_APPOINTMENT = token => `
         appointmentId
         title
         description
-        eventDate
+        eventStart
+        eventEnd
         createAt
         updateAt
       }
@@ -40,7 +58,8 @@ const MUTATION_CREATE_APPOINTMENT = token => `
       appointmentId
       title
       description
-      eventDate
+      eventStart
+      eventEnd
     }
   }
 `
@@ -52,7 +71,8 @@ const MUTATION_UPDATE_APPOINTMENT = token => `
       appointmentId
       title
       description
-      eventDate
+      eventStart
+      eventEnd
       createAt
       updateAt
     }
@@ -70,6 +90,13 @@ export async function listAppointments ({ token, limit, offset }) {
     viewer: { appointments }
   } = await gql(QUERY_LIST_APPOINTMENT(token), { limit, offset })
   return appointments
+}
+
+export async function appointmentsByLawyer ({ token, lawyerId }) {
+  const {
+    viewer: { appointmentsByLawyer }
+  } = await gql(QUERY_LIST_APPOINTMENT_BY_LAWYER(token), { lawyerId })
+  return appointmentsByLawyer
 }
 
 export async function getAppointment ({ token, appointmentId }) {

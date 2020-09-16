@@ -52,7 +52,7 @@
               required
             />
             <v-row>
-              <v-col cols="6">
+              <v-col cols="12">
                 <v-menu
                   v-model="menuDate"
                   :close-on-content-click="false"
@@ -77,9 +77,11 @@
                   />
                 </v-menu>
               </v-col>
+            </v-row>
+            <v-row>
               <v-col cols="6">
                 <v-menu
-                  v-model="menuTime"
+                  v-model="menuTimeStart"
                   :close-on-content-click="false"
                   :nudge-right="40"
                   transition="scale-transition"
@@ -88,8 +90,8 @@
                 >
                   <template v-slot:activator="{ on, attrs }">
                     <v-text-field
-                      v-model="time"
-                      label="Hora"
+                      v-model="timeStart"
+                      label="Início"
                       prepend-icon="mdi-clock"
                       readonly
                       v-bind="attrs"
@@ -97,8 +99,33 @@
                     />
                   </template>
                   <v-time-picker
-                    v-model="time"
-                    @input="menuTime = false"
+                    v-model="timeStart"
+                    @input="menuTimeStart = false"
+                  />
+                </v-menu>
+              </v-col>
+              <v-col cols="6">
+                <v-menu
+                  v-model="menuTimeEnd"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  min-width="290px"
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="timeEnd"
+                      label="Fim"
+                      prepend-icon="mdi-clock"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    />
+                  </template>
+                  <v-time-picker
+                    v-model="timeEnd"
+                    @input="menuTimeEnd = false"
                   />
                 </v-menu>
               </v-col>
@@ -147,8 +174,10 @@ export default {
     },
     menuDate: false,
     date: null,
-    menuTime: false,
-    time: null
+    menuTimeStart: false,
+    timeStart: null,
+    menuTimeEnd: false,
+    timeEnd: null
   }),
   computed: {
     ...mapGetters('client', [
@@ -169,9 +198,11 @@ export default {
           description: newVal.description,
           lawSuitId: newVal.lawSuitId
         }
-        const dateTime = moment(newVal.eventDate)
-        this.date = dateTime.format('YYYY-MM-DD')
-        this.time = dateTime.format('HH:mm')
+        const timeStart = moment(newVal.eventStart)
+        this.date = timeStart.format('YYYY-MM-DD')
+        this.timeStart = timeStart.format('HH:mm')
+        const timeEnd = moment(newVal.eventEnd)
+        this.timeEnd = timeEnd.format('HH:mm')
       }
     }
   },
@@ -182,6 +213,12 @@ export default {
         description: '',
         clientId: null
       }
+      this.menuDate = false
+      this.date = null
+      this.menuTimeStart = false
+      this.timeStart = null
+      this.menuTimeEnd = false
+      this.timeEnd = null
     },
     close () {
       this.resetForm()
@@ -191,13 +228,15 @@ export default {
       return (
         !this.item.title || this.item.title < 4 ||
         !this.item.title || this.item.title < 4 ||
-        !this.date || !this.time || !this.item.lawSuitId
+        !this.date || !this.timeStart || !this.timeEnd ||
+        !this.item.lawSuitId
       )
     },
     save () {
       const input = {
         ...this.item,
-        eventDate: moment(`${this.date} ${this.time}`).toISOString(),
+        eventStart: moment(`${this.date} ${this.timeStart}`).toISOString(),
+        eventEnd: moment(`${this.date} ${this.timeEnd}`).toISOString(),
         clientId: this.client.clientId,
         lawyerId: this.userLoggedIn.lawyerId
       }

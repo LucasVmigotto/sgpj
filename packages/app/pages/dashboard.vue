@@ -68,7 +68,7 @@
                       :key="index"
                     >
                       <td>{{ el.title }}</td>
-                      <td>{{ el.eventDate }}</td>
+                      <td>{{ formatDate(el.eventStart) }} até {{ formatDate(el.eventEnd, 'HH:MM') }}</td>
                     </tr>
                   </tbody>
                 </template>
@@ -119,15 +119,15 @@ export default {
     },
     appointments () {
       return this.userLoggedIn.appointments
-        .filter(el => moment(el.eventDate).isAfter(moment()))
-        .map(el => ({
-          ...el,
-          eventDate: moment(el.eventDate)
-            .locale('pt-br').format('LLLL')
-        }))
+        .filter(el => moment(el.eventStart).isAfter(moment()))
     },
     hasAppointments () {
       return this.appointments.length > 0
+    }
+  },
+  methods: {
+    formatDate (date, pattern = 'LLL') {
+      return moment(date).locale('pt-BR').format(pattern)
     }
   }
 }

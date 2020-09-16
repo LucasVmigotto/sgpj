@@ -25,6 +25,38 @@ describe('Models:Appointment', function () {
   })
   describe('Queries', function () {
     let appointment = null
+    it('appointmentsByLawyer', async function () {
+      const query = `
+        query ($token: String!, $lawyerId: ID!) {
+          viewer(token: $token) {
+            appointmentsByLawyer (lawyerId: $lawyerId) {
+              appointmentId
+              title
+              description
+              eventStart
+              eventEnd
+              createAt
+              updateAt
+            }
+          }
+        }
+      `
+      const {
+        body: {
+          data: {
+            viewer: { appointmentsByLawyer }
+          }
+        }
+      } = await request(httpServer)
+        .post(config.ENDPOINT)
+        .send({
+          query,
+          variables: { token, lawyerId: 1 }
+        })
+        .then(handleResponseError)
+      expect(appointmentsByLawyer).to.be.not.null
+      expect(appointmentsByLawyer).to.be.an('array')
+    })
     it('appointments', async function () {
       const query = `
         query ($token: String!) {
