@@ -45,6 +45,20 @@
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title v-text="title" />
+      <v-spacer />
+      <v-tooltip left>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            color="red"
+            icon
+            v-on="on"
+            @click="logoutUser"
+          >
+            <v-icon>mdi-logout-variant</v-icon>
+          </v-btn>
+        </template>
+        <span>Log out</span>
+      </v-tooltip>
       <v-progress-linear
         v-show="loading"
         :loading="loading"
@@ -73,7 +87,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   data () {
@@ -121,11 +135,18 @@ export default {
     ])
   },
   methods: {
+    ...mapActions('user', [
+      'logout'
+    ]),
     avatarInitials () {
       const words = this.userLoggedIn.name.split(' ')
       const firstLetter = words[0].charAt(0)
       const lastLetter = words[words.length - 1].charAt(0)
       return `${firstLetter}${lastLetter}`
+    },
+    logoutUser () {
+      this.logout()
+      this.$router.push({ name: 'index' })
     }
   }
 }

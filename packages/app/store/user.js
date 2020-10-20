@@ -29,6 +29,10 @@ const user = {
         commit('LOADING_CHANGED', false, { root: true })
       }
     },
+    logout ({ commit }) {
+      commit('USER_LOGGED_IN_CHANGED', null)
+      commit('TOKEN_CHANGED', null)
+    },
     async updateEmail ({ state, commit, dispatch }, { lawyerId, email }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
