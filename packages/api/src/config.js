@@ -7,6 +7,7 @@ module.exports = {
   JWT_SECRET: process.env.JWT_SECRET || 'super-secret-key',
   JWT_EXP: process.env.JWT_EXP || '7d',
   PG_CONNECTION_STRING: process.env.PG_CONNECTION_STRING || 'postgresql://user:rootroot@pg/sgpj_db',
+  MAILHOG_HOST: process.env.MAILHOG_HOST || 'mailhog',
   LOG_LEVEL: process.env.LOG_LEVEL || 'info',
   PLAYGROUND_TOKEN_ADMIN: process.env.PLAYGROUND_TOKEN_ADMIN ||
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsYXd5ZXJJZCI6MSwibmFtZSI6IkpvaG4gRG9lIiwicm9sZXMiOlsiQURNSU4iXSwidXNlciI6eyJ1c2VySWQiOjEsImVtYWlsIjoiZmFrZUBtYWlsLmNvbSJ9LCJjcmVhdGVBdCI6IjIwMjAtMDgtMjJUMTg6MjQ6NTkuNjcyWiIsInVwZGF0ZUF0IjoiMjAyMC0wOC0yMlQxODoyNDo1OS42NzJaIiwiaWF0IjoxNTk4MTIwNzQ4LCJleHAiOjk1OTg3MjU1NDh9.IvSRNeOtjEKg72qnUVqdLfxIu-_cRYALnGR3V3gJ7_U',
