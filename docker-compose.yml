@@ -21,6 +21,12 @@ services:
     links:
     - pg
 
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
+
   api:
     build:
       context: ./docker
@@ -36,6 +42,7 @@ services:
     - POSTGRES_USER
     - POSTGRES_PASSWORD
     - POSTGRES_DB
+    - MAILHOG_HOST
     ports:
     - 4000:4000
     - 9229:9229
@@ -44,7 +51,8 @@ services:
     - home:/home/node
     links:
     - pg
-  
+    - mailhog
+
   app:
     build:
       context: ./docker
