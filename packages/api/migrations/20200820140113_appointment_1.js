@@ -26,7 +26,7 @@ exports.up = async function (knex) {
   return knex('appointment')
     .insert({
       title: 'Appointment Title',
-      description: 'Apointment Description',
+      description: 'Appointment Description',
       event_date: new Date().toISOString(),
       lawyer_id: 1,
       client_id: 1,
