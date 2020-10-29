@@ -55,7 +55,6 @@ const notifyLawSuit = async (transport, knex, lawSuitId) => {
 }
 
 const notifyLawyer = async (transport, lawyerName, lawyerEmail) => {
-
   const subject = `Themis - Cadastro Realizado para ${lawyerName}`
   const html = mailTemplateLawyerAdd(lawyerName)
 
@@ -84,7 +83,6 @@ const notifyLawyer = async (transport, lawyerName, lawyerEmail) => {
     subject,
     message: html
   }
-
 }
 
 module.exports = {
