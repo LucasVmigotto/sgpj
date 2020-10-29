@@ -2,6 +2,7 @@ const { gql } = require('apollo-server-express')
 const { camelizeKeys, decamelizeKeys } = require('humps')
 const { getAppointments, promiseHandler } = require('../utils')
 const { hasAuthorization } = require('../security')
+const { notifyLawSuit } = require('../utils/mail')
 
 const typeDefs = gql`
   type LawSuit {
@@ -87,7 +88,7 @@ const resolvers = {
     }
   },
   Mutation: {
-    async persistLawSuit (_, { lawSuitId, input }, { knex, lawyer }) {
+    async persistLawSuit (_, { lawSuitId, input }, { transport, knex, lawyer }) {
       hasAuthorization(lawyer)
       let lawSuit = null
       if (lawSuitId) {
@@ -102,6 +103,7 @@ const resolvers = {
         lawSuit = await knex('law_suit')
           .insert(decamelizeKeys({ ...input }))
           .returning('*')
+        await notifyLawSuit(transport, knex, lawSuit[0].law_suit_id)
       }
       return camelizeKeys(lawSuit[0])
     },

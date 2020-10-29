@@ -1,6 +1,7 @@
 const { gql } = require('apollo-server-express')
 const { camelizeKeys } = require('humps')
 const { hasAuthorization } = require('../security')
+const { notifyLawyer } = require('../utils/mail')
 const {
   UserTypes,
   cipher,
@@ -109,7 +110,7 @@ const resolvers = {
     }
   },
   Mutation: {
-    async persistLawyer (_, { lawyerId, input }, { knex, lawyer }) {
+    async persistLawyer (_, { lawyerId, input }, { transport, knex, lawyer }) {
       hasAuthorization(lawyer)
       const addLawyer = {
         name: input.name,
@@ -150,6 +151,8 @@ const resolvers = {
             lawyer_id: newLawyer.lawyer_id
           })
           .returning(['user_id', 'email'])
+        console.log({ name: newLawyer.name, email: newUser.email })
+        await notifyLawyer(transport, newLawyer.name, newUser.email)
         return {
           ...camelizeKeys(newLawyer),
           user: {

@@ -2,7 +2,7 @@ const { gql } = require('apollo-server-express')
 const { camelizeKeys } = require('humps')
 const { hasAuthorization } = require('../security')
 const { mountAddress } = require('../utils')
-const { mailTemplate } = require('../data/mailTemplate')
+const { mailTemplateAppointment } = require('../templates/mailMessages')
 const moment = require('moment')
 
 const typeDefs = gql`
@@ -63,7 +63,7 @@ const resolvers = {
       } = camelizeKeys(data)
 
       const subject = `${title} - ${lawSuitTitle}`
-      const html = mailTemplate(
+      const html = mailTemplateAppointment(
         subject,
         description,
         moment(eventStart).locale('pt-BR').format('LLLL'),
