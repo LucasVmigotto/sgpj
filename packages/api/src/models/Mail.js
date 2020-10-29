@@ -2,6 +2,8 @@ const { gql } = require('apollo-server-express')
 const { camelizeKeys } = require('humps')
 const { hasAuthorization } = require('../security')
 const { mountAddress } = require('../utils')
+const { mailTemplate } = require('../data/mailTemplate')
+const moment = require('moment')
 
 const typeDefs = gql`
   type UserAddress {
@@ -34,6 +36,8 @@ const resolvers = {
         .select(
           'appointment.title',
           'appointment.description',
+          'appointment.event_start',
+          'appointment.event_end',
           'client.name as client_name',
           'client.email as client_email',
           'lawyer.name as lawyer_name',
@@ -49,12 +53,22 @@ const resolvers = {
       const {
         title,
         description,
+        eventStart,
+        eventEnd,
         clientName,
         clientEmail,
         lawyerName,
         lawyerEmail,
         lawSuitTitle
       } = camelizeKeys(data)
+
+      const subject = `${title} - ${lawSuitTitle}`
+      const html = mailTemplate(
+        subject,
+        description,
+        moment(eventStart).locale('pt-BR').format('LLLL'),
+        moment(eventEnd).locale('pt-BR').format('LLLL')
+      )
 
       transport.sendMail({
         from: mountAddress({
@@ -65,8 +79,8 @@ const resolvers = {
           name: clientName,
           email: clientEmail
         }),
-        subject: `${title} - ${lawSuitTitle}`,
-        html: `<h1>${description}</h1>`
+        subject,
+        html
       })
 
       return {
@@ -78,8 +92,8 @@ const resolvers = {
           name: clientName,
           email: clientEmail
         },
-        subject: `${title} - ${lawSuitTitle}`,
-        message: `<h1>${description}</h1>`
+        subject,
+        message: html
       }
     }
   }
