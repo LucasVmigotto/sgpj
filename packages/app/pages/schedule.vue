@@ -48,12 +48,30 @@
               >
                 <v-toolbar-title>{{ selectedEvent.title }}</v-toolbar-title>
                 <v-spacer />
-                <v-btn
-                  icon
-                  @click="selectedOpen = false"
-                >
-                  <v-icon>mdi-close</v-icon>
-                </v-btn>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      icon
+                      v-on="on"
+                      @click="notifyByMail(selectedEvent.appointmentId)"
+                    >
+                      <v-icon>mdi-email-send</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Notificar por E-mail</span>
+                </v-tooltip>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      icon
+                      v-on="on"
+                      @click="selectedOpen = false"
+                    >
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Fechar</span>
+                </v-tooltip>
               </v-toolbar>
               <v-card-text>
                 <span>{{ selectedEvent.description }}</span>
@@ -68,6 +86,7 @@
 <script>
 import moment from 'moment'
 import { mapGetters, mapActions } from 'vuex'
+import { notify } from '../api/queries/mail'
 
 export default {
   data: () => ({
@@ -78,6 +97,9 @@ export default {
     selectedOpen: false
   }),
   computed: {
+    ...mapGetters('user', [
+      'token'
+    ]),
     ...mapGetters('appointment', [
       'appointmentsByLawyer'
     ]),
@@ -98,6 +120,9 @@ export default {
     this.$refs.calendar.checkChange()
   },
   methods: {
+    ...mapActions([
+      'pushMessage'
+    ]),
     ...mapActions('appointment', [
       'getAppointmentsByLawyer'
     ]),
@@ -130,6 +155,17 @@ export default {
         open()
       }
       nativeEvent.stopPropagation()
+    },
+    notifyByMail (appointmentId) {
+      notify({ token: this.token, appointmentId })
+        .then((res) => {
+          if (res && res.subject) {
+            this.pushMessage({
+              type: 'success',
+              text: `Email enviado com sucesso para ${res.to.email}!`
+            })
+          }
+        })
     }
   }
 }
