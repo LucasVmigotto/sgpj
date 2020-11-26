@@ -9,6 +9,7 @@ exports.up = async function (knex) {
     t.foreign('client_id')
       .references('client_id')
       .inTable('client')
+      .onDelete('CASCADE')
   })
   return knex('law_suit')
     .insert({

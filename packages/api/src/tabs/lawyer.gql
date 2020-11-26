@@ -27,9 +27,10 @@ query Lawyer ($lawyer: String!) {
       clients {
         clientId
         name
-        cpf
+        register
         email
         phone
+        clientType
         createAt
         updateAt
       }

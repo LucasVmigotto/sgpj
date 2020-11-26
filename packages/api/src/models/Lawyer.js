@@ -43,7 +43,7 @@ const typeDefs = gql`
 
   extend type Mutation {
     persistLawyer(lawyerId: ID, input: LawyerInput!): Lawyer!
-    deleteLawyer(lawyerId: ID!): Boolean
+    deleteLawyer(lawyerId: ID!): Boolean!
   }
 `
 
