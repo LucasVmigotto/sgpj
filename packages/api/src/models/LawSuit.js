@@ -1,6 +1,6 @@
 const { gql } = require('apollo-server-express')
 const { camelizeKeys, decamelizeKeys } = require('humps')
-const { getAppointments, promiseHandler } = require('../utils')
+const { getAppointments, promiseHandler, getNotes } = require('../utils')
 const { hasAuthorization } = require('../security')
 const { notifyLawSuit } = require('../utils/mail')
 
@@ -10,6 +10,7 @@ const typeDefs = gql`
     title: String!
     description: String!
     appointments: [Appointment]!
+    notes: [Note]!
     createAt: DateTime!
     updateAt: DateTime!
   }
@@ -32,7 +33,7 @@ const typeDefs = gql`
 
   extend type Mutation {
     persistLawSuit(lawSuitId: ID, input: LawSuitInput!): LawSuit!
-    deleteLawSuit(lawSuitId: ID!): Boolean
+    deleteLawSuit(lawSuitId: ID!): Boolean!
   }
 `
 
@@ -40,6 +41,9 @@ const resolvers = {
   LawSuit: {
     appointments: ({ lawSuitId }, _, { knex }) => {
       return promiseHandler(getAppointments(knex, lawSuitId, 'LAWSUIT'))
+    },
+    notes: ({ lawSuitId }, _, { knex }) => {
+      return promiseHandler(getNotes(knex, lawSuitId))
     }
   },
   Viewer: {
