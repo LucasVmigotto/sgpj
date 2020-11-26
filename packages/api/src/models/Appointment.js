@@ -36,7 +36,7 @@ const typeDefs = gql`
 
   extend type Mutation {
     persistAppointment(appointmentId: ID, input: AppointmentInput!): Appointment!
-    deleteAppointment(appointmentId: ID!): Boolean
+    deleteAppointment(appointmentId: ID!): Boolean!
   }
 `
 
