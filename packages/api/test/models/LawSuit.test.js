@@ -78,6 +78,12 @@ describe('Models:LawSuit', function () {
                 createAt
                 updateAt
               }
+              notes {
+                noteId
+                text
+                createAt
+                updateAt
+              }
               createAt
               updateAt
             }
@@ -103,6 +109,7 @@ describe('Models:LawSuit', function () {
       expect(item).to.have.property('title')
       expect(item).to.have.property('description')
       expect(item).to.have.property('appointments')
+      expect(item).to.have.property('notes')
       expect(item).to.have.property('createAt')
       expect(item).to.have.property('updateAt')
     })
