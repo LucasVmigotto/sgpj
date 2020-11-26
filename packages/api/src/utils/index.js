@@ -16,9 +16,10 @@ const getClients = async (knex, lawyerId) => await knex('client')
   .select(
     'client_id',
     'name',
-    'cpf',
+    'register',
     'email',
     'phone',
+    'client_type',
     'create_at',
     'update_at'
   )
