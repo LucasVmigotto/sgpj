@@ -3,6 +3,7 @@ import client from './client'
 import lawsuit from './lawsuit'
 import lawyer from './lawyer'
 import user from './user'
+import note from './note'
 
 const store = {
   modules: {
@@ -10,7 +11,8 @@ const store = {
     client,
     lawsuit,
     lawyer,
-    user
+    user,
+    note
   },
   state: () => ({
     loading: false,
