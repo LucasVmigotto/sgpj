@@ -17,6 +17,7 @@ const MUTATION_USER_LOGIN = `
           clientId
           name
           phone
+          clientType
         }
         appointments {
           appointmentId
