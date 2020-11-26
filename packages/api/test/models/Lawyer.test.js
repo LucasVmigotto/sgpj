@@ -45,9 +45,10 @@ describe('Models:Lawyer', function () {
                 clients {
                   clientId
                   name
-                  cpf
+                  register
                   email
                   phone
+                  clientType
                   createAt
                   updateAt
                 }
@@ -89,9 +90,10 @@ describe('Models:Lawyer', function () {
               clients {
                 clientId
                 name
-                cpf
+                register
                 email
                 phone
+                clientType
                 createAt
                 updateAt
               }
