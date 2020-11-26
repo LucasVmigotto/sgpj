@@ -17,6 +17,7 @@ const QUERY_LIST_LAWYERS = token => `
           clients {
             clientId
             name
+            clientType
           }
           createAt
           updateAt
@@ -41,6 +42,7 @@ const QUERY_GET_LAWYER = token => `
         clients {
           clientId
           name
+          clientType
         }
         createAt
         updateAt
