@@ -82,6 +82,11 @@ const UserTypes = {
   LAWYER: 'LAWYER'
 }
 
+const ClientTypes = {
+  FIS: 'FISICO',
+  JUD: 'JURIDICO'
+}
+
 const userInRoles = (user, role = UserTypes.LAWYER) =>
   user.roles.includes(role) || user.roles.includes(UserTypes.ADMIN)
 
@@ -92,6 +97,7 @@ module.exports = {
   cipher,
   signJWT,
   UserTypes,
+  ClientTypes,
   userInRoles,
   defineType,
   promiseHandler,
