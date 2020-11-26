@@ -34,9 +34,10 @@ describe('Models:Client', function () {
               items {
                 clientId
                 name
-                cpf
+                register
                 email
                 phone
+                clientType
                 lawSuits {
                   lawSuitId
                   title
@@ -77,9 +78,10 @@ describe('Models:Client', function () {
             client (clientId: $clientId) {
               clientId
               name
-              cpf
+              register
               email
               phone
+              clientType
               lawSuits {
                 lawSuitId
                 title
@@ -119,9 +121,10 @@ describe('Models:Client', function () {
       expect(item).to.be.not.null
       expect(item).to.have.property('clientId')
       expect(item).to.have.property('name')
-      expect(item).to.have.property('cpf')
+      expect(item).to.have.property('register')
       expect(item).to.have.property('email')
       expect(item).to.have.property('phone')
+      expect(item).to.have.property('clientType')
       expect(item).to.have.property('lawSuits')
       expect(item.lawSuits).to.be.an('array')
       expect(item).to.have.property('appointments')
@@ -139,9 +142,10 @@ describe('Models:Client', function () {
           persistClient(input: $input) {
             clientId
             name
-            cpf
+            register
             email
             phone
+            clientType
             createAt
             updateAt
           }
@@ -151,9 +155,10 @@ describe('Models:Client', function () {
         token,
         input: {
           name: 'John Doe 2',
-          cpf: '85743928583',
+          register: '85743928583',
           email: `${new Date().getMilliseconds()}@mail.com`,
           phone: '987654321',
+          clientType: 'FIS',
           lawyerId: 1
         }
       }
@@ -171,9 +176,10 @@ describe('Models:Client', function () {
       expect(client).to.be.not.null
       expect(client).to.be.an('object')
       expect(client).to.have.property('name')
-      expect(client).to.have.property('cpf')
+      expect(client).to.have.property('register')
       expect(client).to.have.property('email')
       expect(client).to.have.property('phone')
+      expect(client).to.have.property('clientType')
       expect(client).to.have.property('createAt')
       expect(client).to.have.property('updateAt')
     })
@@ -185,7 +191,7 @@ describe('Models:Client', function () {
             persistClient(clientId: $clientId, input: $input) {
               clientId
               name
-              cpf
+              register
               email
               phone
               createAt
@@ -198,9 +204,10 @@ describe('Models:Client', function () {
           clientId: client.clientId,
           input: {
             name: 'John Doe 2 CHANGED',
-            cpf: `${Math.floor(Math.random * 10000000000)}`,
+            register: `${Math.floor(Math.random * 1000000)}${Math.floor(Math.random * 1000000)}`,
             email: `${new Date().getMilliseconds()}@mail.com`,
             phone: `${Math.floor(Math.random * 10000000000)}`,
+            clientType: 'JUD',
             lawyerId: 1
           }
         }
