@@ -57,6 +57,16 @@ const getUser = async (knex, lawyerId) =>
     )
     .where({ lawyer_id: lawyerId })
 
+const getNotes = async (knex, lawSuitId) =>
+  await knex('note')
+    .select(
+      'note_id',
+      'text',
+      'create_at',
+      'update_at'
+    )
+    .where({ law_suit_id: lawSuitId })
+
 const defineType = (identifier, id) => {
   if (identifier === 'LAWYER') {
     return { lawyer_id: id }
@@ -106,5 +116,6 @@ module.exports = {
   getLawSuits,
   getAppointments,
   getUser,
+  getNotes,
   mountAddress
 }
