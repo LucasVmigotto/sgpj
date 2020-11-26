@@ -1,16 +1,17 @@
 const { gql } = require('apollo-server-express')
 const { camelizeKeys, decamelizeKeys } = require('humps')
 const { getLawSuits, promiseHandler } = require('../utils')
-const { getAppointments } = require('../utils')
+const { getAppointments, ClientTypes } = require('../utils')
 const { hasAuthorization } = require('../security')
 
 const typeDefs = gql`
   type Client {
     clientId: ID!
     name: String!
-    cpf: String!
+    register: String!
     email: String
     phone: String!
+    clientType: String!
     lawSuits: [LawSuit]!
     appointments: [Appointment]!
     createAt: DateTime!
@@ -24,9 +25,10 @@ const typeDefs = gql`
 
   input ClientInput {
     name: String!
-    cpf: String!
+    register: String!
     email: String
     phone: String!
+    clientType: String
     lawyerId: ID!
   }
 
@@ -56,9 +58,10 @@ const resolvers = {
         .select(
           'client_id',
           'name',
-          'cpf',
+          'register',
           'email',
           'phone',
+          'client_type',
           'create_at',
           'update_at'
         )
@@ -66,9 +69,10 @@ const resolvers = {
       return {
         clientId: data.client_id,
         name: data.name,
-        cpf: data.cpf,
+        register: data.register,
         email: data.email,
         phone: data.phone,
+        clientType: ClientTypes[data.client_type],
         createAt: data.create_at,
         updateAt: data.update_at
       }
@@ -78,9 +82,10 @@ const resolvers = {
         .select(
           'client_id',
           'name',
-          'cpf',
+          'register',
           'email',
           'phone',
+          'client_type',
           'create_at',
           'update_at'
         )
@@ -93,9 +98,10 @@ const resolvers = {
           return {
             clientId: el.client_id,
             name: el.name,
-            cpf: el.cpf,
+            register: el.register,
             email: el.email,
             phone: el.phone,
+            clientType: ClientTypes[el.client_type],
             createAt: el.create_at,
             updateAt: el.update_at
           }
