@@ -8,9 +8,10 @@ const QUERY_LIST_CLIENTS = token => `
         items {
           clientId
           name
-          cpf
+          register
           email
           phone
+          clientType
           createAt
           updateAt
         }
@@ -25,9 +26,10 @@ const QUERY_GET_CLIENT = token => `
       client(clientId: $clientId) {
         clientId
         name
-        cpf
+        register
         email
         phone
+        clientType
         lawSuits {
           lawSuitId
           title
@@ -67,9 +69,10 @@ const MUTATION_UPDATE_CLIENT = token => `
     persistClient(clientId: $clientId, input: $input) {
       clientId
       name
-      cpf
+      register
       email
       phone
+      clientType
       createAt
       updateAt
     }

@@ -64,7 +64,7 @@ const client = {
     resetClient ({ commit }) {
       commit('CLIENT_CHANGED', {
         name: '',
-        cpf: '',
+        register: '',
         email: '',
         phone: ''
       })

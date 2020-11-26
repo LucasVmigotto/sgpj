@@ -151,7 +151,6 @@ const resolvers = {
             lawyer_id: newLawyer.lawyer_id
           })
           .returning(['user_id', 'email'])
-        console.log({ name: newLawyer.name, email: newUser.email })
         await notifyLawyer(transport, newLawyer.name, newUser.email)
         return {
           ...camelizeKeys(newLawyer),

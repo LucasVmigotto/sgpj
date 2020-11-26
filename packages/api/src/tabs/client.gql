@@ -5,9 +5,10 @@ query Clients ($lawyer: String!) {
       items {
         clientId
         name
-        cpf
+        register
         email
         phone
+        clientType
         createAt
         updateAt
       }
@@ -19,10 +20,11 @@ query Client ($lawyer: String!) {
     client(clientId: 1) {
       clientId
       name
-      cpf
+      register
       email
       phone
-        lawSuits {
+      clientType
+      lawSuits {
         lawSuitId
         title
         description
@@ -44,14 +46,14 @@ query Client ($lawyer: String!) {
   }
 }
 
-mutation CreateClient ($lawyer: String!) {
+mutation CreateClientFisico ($lawyer: String!) {
   authorization(token: $lawyer) {
     lawyerId
   }
   persistClient(
     input: {
       name: "Client",
-      cpf: "00000000000",
+      register: "00000000000",
       email: "email-sample@mail.com",
       phone: "999999999",
       lawyerId: 1
@@ -59,9 +61,35 @@ mutation CreateClient ($lawyer: String!) {
   ) {
     clientId
     name
-    cpf
+    register
     email
     phone
+    clientType
+    createAt
+    updateAt
+  }
+}
+
+mutation CreateClientJuridico ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  persistClient(
+    input: {
+      name: "Client",
+      register: "00000000000000",
+      email: "email-sample@mail.com",
+      phone: "999999999",
+      clientType: "JUD",
+      lawyerId: 1
+    }
+  ) {
+    clientId
+    name
+    register
+    email
+    phone
+    clientType
     createAt
     updateAt
   }
@@ -75,7 +103,7 @@ mutation UpdateClient ($lawyer: String!) {
     clientId: 2,
     input: {
       name: "Client CHANGED",
-      cpf: "00000000000",
+      register: "00000000000",
       email: "email-sample-CHANGED@mail.com",
       phone: "999999999",
       lawyerId: 1
@@ -83,7 +111,7 @@ mutation UpdateClient ($lawyer: String!) {
   ) {
     clientId
     name
-    cpf
+    register
     email
     phone
     createAt
