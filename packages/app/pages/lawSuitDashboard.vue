@@ -15,22 +15,68 @@
         </template>
         <span>Voltar</span>
       </v-tooltip>
+      <v-spacer />
+    </v-row>
+    <v-row>
       <v-col
         class="greet"
-        cols="6"
+        cols="12"
       >
         <span>Processo:</span> {{ lawSuit.title }}
       </v-col>
+      <v-col cols="12">
+        <span>{{ lawSuit.description }}</span>
+      </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-tabs
+          v-model="tab"
+          grow
+        >
+          <v-tab>Notas</v-tab>
+          <v-tab>Compromissos/Tarefas</v-tab>
+        </v-tabs>
+        <v-tabs-items v-model="tab">
+          <v-tab-item>
+            <notes-list
+              :notes="notes"
+              @remove="removeNote"
+              @save="addNote"
+            />
+          </v-tab-item>
+          <v-tab-item>
+            <span>Compromissos/Tarefas conteúdo</span>
+          </v-tab-item>
+        </v-tabs-items>
+      </v-col>
+    </v-row>
+    <confirm-action
+      :visible="confirmDialogVisible"
+      :loading="loading"
+      @confirm="confirmDel"
+      @cancel="cancelDel"
+    />
   </v-layout>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import ConfirmAction from '../components/ConfirmAction.vue'
+import NotesList from '../components/NotesList.vue'
 export default {
+  components: {
+    NotesList,
+    ConfirmAction
+  },
   data: () => ({
-
+    tab: 0,
+    noteSelected: null,
+    confirmDialogVisible: false
   }),
   computed: {
+    ...mapGetters([
+      'loading'
+    ]),
     ...mapGetters('client', [
       'client'
     ]),
@@ -48,12 +94,58 @@ export default {
     ...mapActions('client', [
       'getClient'
     ]),
+    ...mapActions('note', [
+      'resetNote',
+      'createNote',
+      'getNote',
+      'deleteNote'
+    ]),
     goBack () {
       this.getClient(this.client.clientId)
         .then((res) => {
           if (res && res.clientId) {
             this.$router.push({ name: 'clientDashboard' })
           }
+        })
+    },
+    addNote (text) {
+      this.createNote({
+        input: {
+          text,
+          lawSuitId: this.lawSuit.lawSuitId
+        }
+      })
+        .then((res) => {
+          if (res && res.noteId) {
+            this.pushMessage({
+              type: 'success',
+              text: 'Nota criada com sucesso'
+            })
+          }
+        })
+    },
+    removeNote (noteId) {
+      this.getNote(noteId)
+        .then((res) => {
+          if (res && res.noteId) {
+            this.confirmDialogVisible = true
+          }
+        })
+    },
+    cancelDel () {
+      this.resetNote()
+      this.confirmDialogVisible = false
+    },
+    confirmDel () {
+      this.deleteNote(this.noteSelected)
+        .then((res) => {
+          if (res) {
+            this.pushMessage({
+              type: 'success',
+              text: 'Nota removida com sucesso'
+            })
+          }
+          this.confirmDialogVisible = false
         })
     }
   }

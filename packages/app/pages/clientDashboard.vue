@@ -15,9 +15,12 @@
         </template>
         <span>Voltar</span>
       </v-tooltip>
+      <v-spacer />
+    </v-row>
+    <v-row>
       <v-col
         class="greet"
-        cols="6"
+        cols="12"
       >
         <span>Nome:</span> {{ client.name }}
       </v-col>
