@@ -20,7 +20,7 @@ const note = {
   actions: {
     async listNotes ({
       commit, dispatch, rootState: { user: { token } }
-    }, { lawSuitId }) {
+    }, lawSuitId) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
         const { count, items } = await noteAPI.listNotes({
@@ -28,6 +28,7 @@ const note = {
         })
         commit('NOTES_CHANGED', items)
         commit('COUNT_CHANGED', count)
+        return items
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
         dispatch('setError', err, { root: true })
