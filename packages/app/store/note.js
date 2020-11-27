@@ -65,7 +65,7 @@ const note = {
         } else {
           data = await noteAPI.createNote({ token, input })
         }
-        dispatch('listNotes', { lawSuitId: input.lawSuitId })
+        dispatch('listNotes', input.lawSuitId)
         return data
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
@@ -75,13 +75,15 @@ const note = {
       }
     },
     async deleteNote ({
-      state, commit, dispatch, rootState: { user: { token } }
-    }, { noteId }) {
+      state, commit, dispatch, rootState: { user: { token }, lawsuit: { lawSuit } }
+    }) {
       commit('LOADING_CHANGED', true, { root: true })
       try {
-        const success = await noteAPI.deleteNote({ token, noteId })
-        dispatch('listNotes', { lawSuitId: state.note.lawSuitId })
-        dispatch('resetNote')
+        const success = await noteAPI.deleteNote({
+          token,
+          noteId: state.note.noteId
+        })
+        dispatch('listNotes', lawSuit.lawSuitId)
         return success
       } catch (err) {
         commit('ERROR_CHANGED', err, { root: true })
