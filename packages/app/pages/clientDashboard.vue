@@ -15,9 +15,12 @@
         </template>
         <span>Voltar</span>
       </v-tooltip>
+      <v-spacer />
+    </v-row>
+    <v-row>
       <v-col
         class="greet"
-        cols="6"
+        cols="12"
       >
         <span>Nome:</span> {{ client.name }}
       </v-col>
@@ -29,6 +32,7 @@
           :law-suits="client.lawSuits"
           @edit="editLawSuit"
           @remove="removeLawSuit"
+          @info="moreInfoLawSuit"
         />
         <div v-else>
           <v-icon large>
@@ -160,6 +164,9 @@ export default {
     ]),
     ...mapActions('client', [
       'getClient'
+    ]),
+    ...mapActions('note', [
+      'listNotes'
     ]),
     closeDialog (dialog) {
       if (dialog === 'lawSuit') {
@@ -300,6 +307,23 @@ export default {
           })
         this.resetSelected()
       }
+    },
+    moreInfoLawSuit (lawSuitId) {
+      // this.getClient(clientId)
+      //   .then((res) => {
+      //     if (res && res.clientId && res.clientId === clientId) {
+      //       this.$router.push({ name: 'clientDashboard' })
+      //     }
+      //   })
+      Promise.all([
+        this.getLawSuit(lawSuitId),
+        this.listNotes(lawSuitId)
+      ])
+        .then(([obj, notes]) => {
+          if (obj && notes && Array.isArray(notes)) {
+            this.$router.push({ name: 'lawSuitDashboard' })
+          }
+        })
     }
   }
 }

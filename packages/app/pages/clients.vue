@@ -15,6 +15,9 @@
                   v-for="(el, index) in items"
                   :key="index"
                 >
+                  <td>
+                    <client-type :type="el.clientType" />
+                  </td>
                   <td>{{ el.name }}</td>
                   <td>{{ el.cpf }}</td>
                   <td>{{ el.email }}</td>
@@ -111,14 +114,15 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-// import { cloneDeep } from 'lodash'
 import ConfirmAction from '../components/ConfirmAction'
 import ClientDialog from '../components/ClientDialog'
+import ClientType from '../components/ClientType'
 
 export default {
   components: {
     ConfirmAction,
-    ClientDialog
+    ClientDialog,
+    ClientType
   },
   data () {
     return {
@@ -144,6 +148,11 @@ export default {
       'pageLength'
     ]),
     headers: () => ([
+      {
+        title: 'Tipo',
+        sortable: false,
+        value: 'clientType'
+      },
       {
         title: 'Nome',
         sortable: false,

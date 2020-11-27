@@ -52,6 +52,21 @@
                 </template>
                 <span>Remover processo</span>
               </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    small
+                    icon
+                    v-on="on"
+                    @click="goToLawSuit(el.lawSuitId)"
+                  >
+                    <v-icon>mdi-chevron-right-box</v-icon>
+                  </v-btn>
+                </template>
+                <span>
+                  Visualizar processo
+                </span>
+              </v-tooltip>
             </td>
           </tr>
         </tbody>
@@ -74,6 +89,9 @@ export default {
     },
     remove (id) {
       this.$emit('remove', id)
+    },
+    goToLawSuit (id) {
+      this.$emit('info', id)
     }
   }
 }
