@@ -20,13 +20,10 @@ const QUERY_GET_NOTE = token => `
   query ($noteId: ID!) {
     viewer(token: "${token}") {
       note(noteId: $noteId) {
-        count
-        items {
-          noteId
-          text
-          createAt
-          updateAt
-        }
+        noteId
+        text
+        createAt
+        updateAt
       }
     }
   }
