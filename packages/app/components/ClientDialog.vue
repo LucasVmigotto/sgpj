@@ -147,7 +147,6 @@ export default {
   },
   watch: {
     client ({ name, register, email, phone, clientType }) {
-      console.log(clientType)
       this.clientEdit = {
         name,
         cpf: clientType === 'FISICO'

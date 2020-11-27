@@ -8,7 +8,8 @@ const {
   getClients,
   getUser,
   getAppointments,
-  promiseHandler
+  promiseHandler,
+  ClientTypes
 } = require('../utils')
 
 const typeDefs = gql`
@@ -43,7 +44,7 @@ const typeDefs = gql`
 
   extend type Mutation {
     persistLawyer(lawyerId: ID, input: LawyerInput!): Lawyer!
-    deleteLawyer(lawyerId: ID!): Boolean
+    deleteLawyer(lawyerId: ID!): Boolean!
   }
 `
 
@@ -55,6 +56,10 @@ const resolvers = {
     },
     clients: ({ lawyerId }, _, { knex }) => {
       return promiseHandler(getClients(knex, lawyerId))
+        .then(res => res.map(el => ({
+          ...el,
+          clientType: ClientTypes[el.clientType]
+        })))
     },
     appointments: ({ lawyerId }, _, { knex }) => {
       return promiseHandler(getAppointments(knex, lawyerId, 'LAWYER'))

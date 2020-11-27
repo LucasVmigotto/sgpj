@@ -24,6 +24,7 @@
                 <template v-slot:default>
                   <thead>
                     <tr>
+                      <th />
                       <th>Nome</th>
                       <th>Telefone</th>
                     </tr>
@@ -33,6 +34,9 @@
                       v-for="(el, index) in clients"
                       :key="index"
                     >
+                      <td>
+                        <client-type :type="el.clientType" />
+                      </td>
                       <td>{{ el.name }}</td>
                       <td>{{ el.phone }}</td>
                     </tr>
@@ -92,8 +96,10 @@
 <script>
 import moment from 'moment'
 import { mapGetters } from 'vuex'
+import ClientType from '../components/ClientType'
 
 export default {
+  components: { ClientType },
   data () {
     return {
 

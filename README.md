@@ -35,6 +35,10 @@ Sistema que visa auxiliar advogados e demais envolvidos no âmbito do direito na
 
 4. Utilize os serviços
 
+    * **_Mailhog_**
+
+        O serviço de simulação de E-mails estará disponível em [localhost:8025](http://localhost:8025)
+
     * **_pgcli_**:
 
         ```bash
@@ -47,6 +51,8 @@ Sistema que visa auxiliar advogados e demais envolvidos no âmbito do direito na
             ```bash
             docker-compose up api
             ```
+
+            Quando disponível, o serviço de _API_ habilitará um ambiente de teste das chamadas de requisições em um [Playground GraphQL](http://localhost:4000/api/graphql)
 
         * Utilizar a `CLI`:
 
@@ -85,6 +91,8 @@ Sistema que visa auxiliar advogados e demais envolvidos no âmbito do direito na
             ```bash
             docker-compose up app
             ```
+
+            Após iniciada, a aplicação estará disponível em [localhost:4001](http://locahost:4001)
 
         * Utilizar a `CLI`:
 
