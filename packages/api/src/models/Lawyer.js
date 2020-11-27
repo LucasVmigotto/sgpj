@@ -57,9 +57,9 @@ const resolvers = {
     clients: ({ lawyerId }, _, { knex }) => {
       return promiseHandler(getClients(knex, lawyerId))
         .then(res => res.map(el => ({
-            ...el,
-            clientType: ClientTypes[el.clientType]
-          })))
+          ...el,
+          clientType: ClientTypes[el.clientType]
+        })))
     },
     appointments: ({ lawyerId }, _, { knex }) => {
       return promiseHandler(getAppointments(knex, lawyerId, 'LAWYER'))

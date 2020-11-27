@@ -46,7 +46,10 @@
             />
           </v-tab-item>
           <v-tab-item>
-            <span>Compromissos/Tarefas conteúdo</span>
+            <calendar
+              :events="lawSuit.appointments"
+              @notify="notifyByMail"
+            />
           </v-tab-item>
         </v-tabs-items>
       </v-col>
@@ -61,12 +64,15 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import ConfirmAction from '../components/ConfirmAction.vue'
-import NotesList from '../components/NotesList.vue'
+import { notify } from '../api/queries/mail'
+import ConfirmAction from '../components/ConfirmAction'
+import NotesList from '../components/NotesList'
+import Calendar from '../components/Calendar'
 export default {
   components: {
+    ConfirmAction,
     NotesList,
-    ConfirmAction
+    Calendar
   },
   data: () => ({
     tab: 0,
@@ -76,6 +82,9 @@ export default {
   computed: {
     ...mapGetters([
       'loading'
+    ]),
+    ...mapGetters('user', [
+      'token'
     ]),
     ...mapGetters('client', [
       'client'
@@ -146,6 +155,17 @@ export default {
             })
           }
           this.confirmDialogVisible = false
+        })
+    },
+    notifyByMail (appointmentId) {
+      notify({ token: this.token, appointmentId })
+        .then((res) => {
+          if (res && res.subject) {
+            this.pushMessage({
+              type: 'success',
+              text: `Email enviado com sucesso para ${res.to.email}!`
+            })
+          }
         })
     }
   }
