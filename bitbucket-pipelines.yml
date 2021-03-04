@@ -1,0 +1,45 @@
+image: node:14
+
+definitions:
+  services:
+    postgres:
+      image: postgres:11
+      environment:
+        POSTGRES_USER: $POSTGRES_USER
+        POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+        POSTGRES_DB: $POSTGRES_DB
+  caches:
+    node-api: packages/api/node_modules
+  steps:
+    - step: &lint
+        name: Lint
+        caches:
+          - node
+        script:
+          - yarn install
+          - yarn lint
+    - step: &test
+        name: Test
+        caches:
+          - node
+          - node-api
+        script:
+          - apt-get update
+          - apt-get install -y postgresql
+          - export PG_CONNECTION_STRING=postgresql://user:rootroot@localhost/sgpj_db
+          - yarn
+          - yarn migrate
+          - yarn test
+        services:
+          - postgres
+
+pipelines:
+  default:
+    - step: *lint
+  branches:
+    master:
+      - step: *lint
+      - step: *test
+    dev:
+      - step: *lint
+      - step: *test

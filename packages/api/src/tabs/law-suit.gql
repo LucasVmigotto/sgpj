@@ -1,0 +1,80 @@
+query LawSuits ($lawyer: String!) {
+  viewer(token: $lawyer) {
+    lawSuits(limit: 10, offset: 0) {
+      count
+      items {
+        lawSuitId
+        title
+        description
+        createAt
+        updateAt
+      }
+    }
+  }
+}
+query LawSuit ($lawyer: String!) {
+  viewer(token: $lawyer) {
+    lawSuit(lawSuitId: 1) {
+      lawSuitId
+      title
+      description
+      appointments {
+        appointmentId
+        title
+        description
+        eventStart
+        eventEnd
+        createAt
+        updateAt
+      }
+      createAt
+      updateAt
+    }
+  }
+}
+
+mutation CreateLawSuit ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  persistLawSuit(
+    input: {
+      title: "Law Suit Title",
+      description: "Law Suit Description",
+      clientId: 1
+    }
+  ) {
+    lawSuitId
+    title
+    description
+    createAt
+    updateAt
+  }
+}
+
+mutation UpdateLawSuit ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  persistLawSuit(
+    lawSuitId: 2,
+    input: {
+      title: "Law Suit Title CHANGED",
+      description: "Law Suit Description CHANGED",
+      clientId: 2
+    }
+  ) {
+    lawSuitId
+    title
+    description
+    createAt
+    updateAt
+  }
+}
+
+mutation DeleteLawSuit ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  deleteLawSuit(lawSuitId: 2)
+}

@@ -1,6 +1,6 @@
 FROM node:14.8-alpine
 
-RUN apk add --no-cache bash curl git shadow tar
+RUN apk add --no-cache bash curl git shadow python make g++
 
 ENV GOSU_VERSION 1.10
 RUN curl -sS -Lo /usr/bin/gosu https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64
@@ -9,7 +9,8 @@ RUN chmod +x /usr/bin/gosu
 ENV TZ=America/Sao_Paulo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-COPY entrypoint.sh /usr/bin/
+ENV GIST_URL https://gist.githubusercontent.com/LucasVmigotto/c9e335f85acb9bc27f0504563419a80a/raw/0d933d37842a55853c95f9ddd80b7edc4b6f7e78/entrypoint.sh
+RUN curl $GIST_URL > /usr/bin/entrypoint.sh
 RUN chmod +x /usr/bin/entrypoint.sh
 
 VOLUME /app

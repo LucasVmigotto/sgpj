@@ -1,0 +1,66 @@
+query Notes ($lawyer: String!) {
+  viewer(token: $lawyer) {
+    notes(lawSuitId: 1) {
+      count
+      items {
+        noteId
+        text
+        createAt
+        updateAt
+      }
+    }
+  }
+}
+
+query Note ($lawyer: String!) {
+  viewer(token: $lawyer) {
+    note(noteId: 1) {
+      noteId
+      text
+      createAt
+      updateAt
+    }
+  }
+}
+
+mutation CreateNote ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  persistNote(
+    input: {
+      text: "Ainda assim, existem dúvidas a respeito de como a valorização de fatores subjetivos faz parte de um processo de gerenciamento do fluxo de informações.",
+      lawSuitId: 1
+    }
+  ) {
+    noteId
+    text
+    createAt
+    updateAt
+  }
+}
+
+mutation UpdateNote ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  persistNote(
+    noteId: 1,
+    input: {
+      text: "Todas estas questões, devidamente ponderadas, levantam dúvidas sobre se o entendimento das metas propostas promove a alavancagem do investimento em reciclagem técnica.",
+      lawSuitId: 1
+    }
+  ) {
+    noteId
+    text
+    createAt
+    updateAt
+  }
+}
+
+mutation DeleteNote ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  deleteNote(noteId: 1)
+}

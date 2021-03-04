@@ -1,0 +1,100 @@
+query AppointmentsByLawyer ($lawyer: String!) {
+  viewer(token: $lawyer) {
+    appointmentsByLawyer(lawyerId: 1) {
+      appointmentId
+      title
+      description
+      eventStart
+      eventEnd
+      createAt
+      updateAt
+    }
+  }
+}
+query Appointments ($lawyer: String!) {
+  viewer(token: $lawyer) {
+    appointments(limit: 10, offset: 0) {
+      count
+      items {
+        appointmentId
+        title
+        description
+        eventStart
+        eventEnd
+        createAt
+        updateAt
+      }
+    }
+  }
+}
+query Appointment ($lawyer: String!) {
+  viewer(token: $lawyer) {
+    appointment(appointmentId: 1) {
+      appointmentId
+      title
+      description
+      eventStart
+      eventEnd
+      createAt
+      updateAt
+    }
+  }
+}
+
+mutation CreateAppointment ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  persistAppointment(
+    input: {
+      title: "Appointment Title",
+      description: "Appointment Description",
+      eventStart: "2020-12-20T18:21:28.196Z",
+      eventEnd: "2020-12-20T18:21:28.196Z",
+      lawyerId: 1,
+      clientId: 1,
+      lawSuitId: 1
+    }
+  ) {
+    appointmentId
+    title
+    description
+    eventStart
+    eventEnd
+    createAt
+    updateAt
+  }
+}
+
+mutation UpdateAppointment ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  persistAppointment(
+    appointmentId: 2,
+    input: {
+      title: "Appointment Title CHANGED",
+      description: "Appointment Description CHANGED",
+      eventStart: "2020-12-20T18:21:28.196Z",
+      eventEnd: "2020-12-20T18:21:28.196Z",
+      lawyerId: 1,
+      clientId: 1,
+      lawSuitId: 1
+    }
+  ) {
+    appointmentId
+    title
+    description
+    eventStart
+    eventEnd
+    createAt
+    updateAt
+  }
+}
+
+mutation DeleteAppointment ($lawyer: String!){
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  deleteAppointment(appointmentId: 2)
+}

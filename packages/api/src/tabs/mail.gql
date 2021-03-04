@@ -1,0 +1,11 @@
+mutation SendMail ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  notify(appointmentId: 1) {
+    from { name email }
+    to { name email }
+    subject
+    message
+  }
+}

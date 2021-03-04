@@ -1,0 +1,127 @@
+query Clients ($lawyer: String!) {
+  viewer(token: $lawyer) {
+    clients(limit: 10, offset: 0) {
+      count
+      items {
+        clientId
+        name
+        register
+        email
+        phone
+        clientType
+        createAt
+        updateAt
+      }
+    }
+  }
+}
+query Client ($lawyer: String!) {
+  viewer(token: $lawyer) {
+    client(clientId: 1) {
+      clientId
+      name
+      register
+      email
+      phone
+      clientType
+      lawSuits {
+        lawSuitId
+        title
+        description
+        createAt
+        updateAt
+      }
+      appointments {
+        appointmentId
+        title
+        description
+        eventStart
+        eventEnd
+        createAt
+        updateAt
+      }
+      createAt
+      updateAt
+    }
+  }
+}
+
+mutation CreateClientFisico ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  persistClient(
+    input: {
+      name: "Client",
+      register: "00000000000",
+      email: "email-sample@mail.com",
+      phone: "999999999",
+      lawyerId: 1
+    }
+  ) {
+    clientId
+    name
+    register
+    email
+    phone
+    clientType
+    createAt
+    updateAt
+  }
+}
+
+mutation CreateClientJuridico ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  persistClient(
+    input: {
+      name: "Client",
+      register: "00000000000000",
+      email: "email-sample@mail.com",
+      phone: "999999999",
+      clientType: "JUD",
+      lawyerId: 1
+    }
+  ) {
+    clientId
+    name
+    register
+    email
+    phone
+    clientType
+    createAt
+    updateAt
+  }
+}
+
+mutation UpdateClient ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  persistClient(
+    clientId: 2,
+    input: {
+      name: "Client CHANGED",
+      register: "00000000000",
+      email: "email-sample-CHANGED@mail.com",
+      phone: "999999999",
+      lawyerId: 1
+    }
+  ) {
+    clientId
+    name
+    register
+    email
+    phone
+    createAt
+    updateAt
+  }
+}
+
+mutation DeleteClient ($lawyer: String!) {
+  authorization(token: $lawyer) {
+    lawyerId
+  }
+  deleteClient(clientId: 2)
+}
